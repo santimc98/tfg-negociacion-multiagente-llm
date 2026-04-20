@@ -112,6 +112,16 @@ class Agreement:
 
 
 @dataclass(frozen=True)
+class NegotiationState:
+    """Snapshot of the operational negotiation state."""
+
+    latest_valid_proposal_by_agent: dict[AgentRole, str] = field(default_factory=dict)
+    rejected_offer_ids: tuple[str, ...] = ()
+    active_offer_id: str | None = None
+    last_state_change_reason: str = "initialized"
+
+
+@dataclass(frozen=True)
 class TurnLog:
     """Structured record of one agent turn."""
 
@@ -121,6 +131,9 @@ class TurnLog:
     is_valid: bool
     errors: tuple[str, ...] = field(default_factory=tuple)
     negotiation_state: str = "running"
+    target_offer_id_resolved: bool | None = None
+    result_summary: str = ""
+    state_after: NegotiationState | None = None
 
 
 @dataclass(frozen=True)

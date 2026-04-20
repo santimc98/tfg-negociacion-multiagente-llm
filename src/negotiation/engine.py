@@ -11,6 +11,7 @@ from negotiation.models import (
     NegotiationAction,
     NegotiationActionType,
     NegotiationResult,
+    NegotiationState,
     OfferTerms,
     Scenario,
     TurnLog,
@@ -64,6 +65,9 @@ class NegotiationEngine:
         turn_log: list[TurnLog] = []
         proposals: dict[str, StoredProposal] = {}
         latest_valid_proposal_by_agent: dict[AgentRole, str] = {}
+        rejected_offer_ids: set[str] = set()
+        active_offer_id: str | None = None
+        last_state_change_reason = "initialized"
         proposal_sequence = 0
 
         for round_number in range(1, self.max_rounds + 1):
@@ -86,12 +90,15 @@ class NegotiationEngine:
                     proposal_sequence += 1
                     proposal_id = f"O{proposal_sequence}"
                     action = replace(action, proposal_id=proposal_id)
+                    assert action.offer_terms is not None
                     proposals[proposal_id] = StoredProposal(
                         proposal_id=proposal_id,
                         proposer=role,
                         terms=action.offer_terms,
                     )
                     latest_valid_proposal_by_agent[role] = proposal_id
+                    active_offer_id = proposal_id
+                    last_state_change_reason = f"{action.action_type.value} registered as {proposal_id}"
 
                 if validation.is_valid and action.action_type == NegotiationActionType.ACCEPT:
                     context_validation = self._validate_accept_context(
@@ -111,6 +118,11 @@ class NegotiationEngine:
                             action=action,
                             validation=validation,
                             negotiation_state="invalid_provider_output",
+                            proposals=proposals,
+                            latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                            rejected_offer_ids=rejected_offer_ids,
+                            active_offer_id=active_offer_id,
+                            last_state_change_reason="invalid provider output",
                         )
                     )
                     return self._result(
@@ -128,6 +140,11 @@ class NegotiationEngine:
                             action=action,
                             validation=validation,
                             negotiation_state="walk_away",
+                            proposals=proposals,
+                            latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                            rejected_offer_ids=rejected_offer_ids,
+                            active_offer_id=active_offer_id,
+                            last_state_change_reason="walk-away action received",
                         )
                     )
                     return self._result(
@@ -137,7 +154,30 @@ class NegotiationEngine:
                         stopped_reason="walk_away",
                     )
 
+                if action.action_type == NegotiationActionType.REJECT:
+                    assert action.target_offer_id is not None
+                    rejected_offer_ids.add(action.target_offer_id)
+                    if active_offer_id == action.target_offer_id:
+                        active_offer_id = None
+                    last_state_change_reason = f"{role} rejected {action.target_offer_id}"
+                    turn_log.append(
+                        self._build_turn_log(
+                            round_number=round_number,
+                            role=role,
+                            action=action,
+                            validation=validation,
+                            negotiation_state="running",
+                            proposals=proposals,
+                            latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                            rejected_offer_ids=rejected_offer_ids,
+                            active_offer_id=active_offer_id,
+                            last_state_change_reason=last_state_change_reason,
+                        )
+                    )
+                    continue
+
                 if action.action_type == NegotiationActionType.ACCEPT:
+                    assert action.target_offer_id is not None
                     proposal = proposals[action.target_offer_id]
                     private_acceptance_validation = validate_terms_for_acceptance(
                         role=role,
@@ -152,6 +192,11 @@ class NegotiationEngine:
                                 action=action,
                                 validation=private_acceptance_validation,
                                 negotiation_state="invalid_provider_output",
+                                proposals=proposals,
+                                latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                                rejected_offer_ids=rejected_offer_ids,
+                                active_offer_id=active_offer_id,
+                                last_state_change_reason="private acceptance guardrail violation",
                             )
                         )
                         return self._result(
@@ -177,6 +222,11 @@ class NegotiationEngine:
                                 action=action,
                                 validation=agreement_validation,
                                 negotiation_state="invalid_provider_output",
+                                proposals=proposals,
+                                latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                                rejected_offer_ids=rejected_offer_ids,
+                                active_offer_id=active_offer_id,
+                                last_state_change_reason="invalid agreement",
                             )
                         )
                         return self._result(
@@ -193,6 +243,11 @@ class NegotiationEngine:
                             action=action,
                             validation=validation,
                             negotiation_state="agreement_reached",
+                            proposals=proposals,
+                            latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                            rejected_offer_ids=rejected_offer_ids,
+                            active_offer_id=proposal.proposal_id,
+                            last_state_change_reason=f"{role} accepted {proposal.proposal_id}",
                         )
                     )
                     return self._result(
@@ -209,6 +264,11 @@ class NegotiationEngine:
                         action=action,
                         validation=validation,
                         negotiation_state="running",
+                        proposals=proposals,
+                        latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                        rejected_offer_ids=rejected_offer_ids,
+                        active_offer_id=active_offer_id,
+                        last_state_change_reason=last_state_change_reason,
                     )
                 )
 
@@ -250,7 +310,15 @@ class NegotiationEngine:
         action: NegotiationAction,
         validation: ValidationResult,
         negotiation_state: str,
+        proposals: dict[str, StoredProposal],
+        latest_valid_proposal_by_agent: dict[AgentRole, str],
+        rejected_offer_ids: set[str],
+        active_offer_id: str | None,
+        last_state_change_reason: str,
     ) -> TurnLog:
+        target_offer_id_resolved = (
+            None if action.target_offer_id is None else action.target_offer_id in proposals
+        )
         return TurnLog(
             round_number=round_number,
             agent_role=role,
@@ -258,7 +326,47 @@ class NegotiationEngine:
             is_valid=validation.is_valid,
             errors=validation.errors,
             negotiation_state=negotiation_state,
+            target_offer_id_resolved=target_offer_id_resolved,
+            result_summary=self._result_summary(action, validation, negotiation_state),
+            state_after=self._state_snapshot(
+                latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                rejected_offer_ids=rejected_offer_ids,
+                active_offer_id=active_offer_id,
+                last_state_change_reason=last_state_change_reason,
+            ),
         )
+
+    def _state_snapshot(
+        self,
+        latest_valid_proposal_by_agent: dict[AgentRole, str],
+        rejected_offer_ids: set[str],
+        active_offer_id: str | None,
+        last_state_change_reason: str,
+    ) -> NegotiationState:
+        return NegotiationState(
+            latest_valid_proposal_by_agent=dict(latest_valid_proposal_by_agent),
+            rejected_offer_ids=tuple(sorted(rejected_offer_ids)),
+            active_offer_id=active_offer_id,
+            last_state_change_reason=last_state_change_reason,
+        )
+
+    def _result_summary(
+        self,
+        action: NegotiationAction,
+        validation: ValidationResult,
+        negotiation_state: str,
+    ) -> str:
+        if not validation.is_valid:
+            return f"{action.action_type.value} invalid: {'; '.join(validation.errors)}"
+        if action.action_type in {NegotiationActionType.PROPOSE, NegotiationActionType.COUNTER}:
+            return f"{action.action_type.value} accepted as valid proposal {action.proposal_id}"
+        if action.action_type == NegotiationActionType.REJECT:
+            return f"REJECT registered for proposal {action.target_offer_id}"
+        if action.action_type == NegotiationActionType.ACCEPT:
+            return f"ACCEPT closed negotiation with state {negotiation_state}"
+        if action.action_type == NegotiationActionType.WALK_AWAY:
+            return "WALK_AWAY closed negotiation"
+        return negotiation_state
 
     def _result(
         self,

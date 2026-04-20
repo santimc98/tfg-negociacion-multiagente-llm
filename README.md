@@ -17,8 +17,10 @@ src/
     validator.py
     engine.py
     metrics.py
+    exporter.py
   scenarios/
     generator.py
+    batch.py
   llm/
     provider.py
   main.py
@@ -66,5 +68,9 @@ Cada propuesta o contraoferta válida recibe un identificador. `PROPOSE` inicia 
 Un acuerdo solo se crea cuando un agente acepta explícitamente la última propuesta válida de la contraparte y esos términos respetan también sus guardrails privados. El acuerdo conserva exactamente los términos aceptados.
 
 Las métricas incluyen utilidad de comprador y vendedor, utilidad conjunta, viabilidad privada por agente y diferencia absoluta entre utilidades (`agreement_balance_gap`).
+
+Cada turno guarda un snapshot del estado posterior: última propuesta válida por agente, propuestas rechazadas, propuesta activa y motivo del último cambio de estado. Esto permite reconstruir la evolución de la negociación sin inferirla desde texto libre.
+
+El módulo `negotiation.exporter` exporta resultados completos a JSON con escenario, historial, acuerdo, métricas y motivo de parada. El módulo `scenarios.batch` ejecuta lotes de escenarios simulados y devuelve métricas agregadas para evaluación experimental.
 
 La implementación usa un `MockNegotiationProvider` para simular acciones. Más adelante puede sustituirse por un proveedor conectado a un LLM local open-source manteniendo la misma interfaz.
