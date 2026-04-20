@@ -24,8 +24,12 @@ src/
   experiments/
     runner.py
   llm/
+    action_parser.py
+    factory.py
+    ollama_provider.py
     provider.py
   main.py
+  run_ollama_demo.py
 tests/
   test_validator.py
   test_engine.py
@@ -79,4 +83,41 @@ El módulo `negotiation.exporter` exporta resultados completos a JSON con escena
 
 El módulo `scenarios.generator` incluye `generate_simulated_scenarios(...)` para crear escenarios reproducibles con variaciones controladas en precios, cantidades y plazos. El módulo `experiments.runner` combina generación, batch simulation y exportación JSON para ejecuciones experimentales simples del TFG.
 
-La implementación usa un `MockNegotiationProvider` para simular acciones. Más adelante puede sustituirse por un proveedor conectado a un LLM local open-source manteniendo la misma interfaz.
+La implementación usa un `MockNegotiationProvider` para simular acciones. También existe un proveedor local basado en Ollama que mantiene la misma interfaz.
+
+## Proveedores de acciones
+
+El motor acepta cualquier proveedor que implemente la interfaz `ActionProvider`. Actualmente hay dos opciones:
+
+- `mock`: baseline determinista para pruebas y comparaciones reproducibles.
+- `ollama`: proveedor LLM local basado en Ollama.
+
+La seleccion se hace con `llm.factory.create_provider(...)` o desde los runners experimentales.
+
+## Ollama
+
+El proveedor Ollama vive en `src/llm/ollama_provider.py`. Usa la API local `/api/chat` y solicita salida estructurada JSON con los campos:
+
+- `action_type`
+- `target_offer_id`
+- `offer_terms`
+- `rationale`
+
+El LLM no valida el protocolo ni decide si una accion es aceptable. Solo propone una accion estructurada. El motor y `negotiation.validator` siguen siendo la autoridad: validan referencias, restricciones publicas, guardrails privados, propuestas rechazadas y cierre de acuerdos.
+
+Ejemplo de ejecucion con Ollama:
+
+```bash
+python src/run_ollama_demo.py --model gemma3:27b --base-url http://localhost:11434
+```
+
+Si tu modelo local usa otro nombre, cambialo con `--model`. La demo no requiere interfaz grafica.
+
+Los experimentos reproducibles tambien pueden usar Ollama mediante `experiments.runner.run_reproducible_experiment(provider_kind="ollama", ...)`. Para comparaciones academicas, `provider_kind="mock"` se mantiene como baseline.
+
+Limitaciones actuales del proveedor local:
+
+- no reintenta automaticamente salidas malformadas;
+- no corrige acciones invalidas generadas por el modelo;
+- si Ollama falla o devuelve JSON invalido, el proveedor emite una accion invalida controlada y el motor termina con `invalid_provider_output`;
+- la calidad depende del modelo local, temperatura y prompt.

@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from llm.factory import ProviderKind, create_provider
 from scenarios.batch import batch_result_to_dict, batch_result_to_json, run_batch_simulation
 from scenarios.generator import generate_simulated_scenarios, scenario_to_dict
 
@@ -15,11 +16,33 @@ def run_reproducible_experiment(
     seed: int = 42,
     max_rounds: int = 5,
     include_individual_results: bool = True,
+    provider_kind: ProviderKind = "mock",
+    model_name: str = "gemma3:27b",
+    base_url: str = "http://localhost:11434",
+    temperature: float = 0.2,
+    timeout_seconds: float = 60.0,
 ) -> dict[str, Any]:
     """Generate scenarios, run a batch and return JSON-compatible results."""
 
     scenarios = generate_simulated_scenarios(count=scenario_count, seed=seed)
-    batch_result = run_batch_simulation(scenarios=scenarios, max_rounds=max_rounds)
+    batch_result = run_batch_simulation(
+        scenarios=scenarios,
+        max_rounds=max_rounds,
+        buyer_provider_factory=lambda: create_provider(
+            provider_kind=provider_kind,
+            model_name=model_name,
+            base_url=base_url,
+            temperature=temperature,
+            timeout_seconds=timeout_seconds,
+        ),
+        seller_provider_factory=lambda: create_provider(
+            provider_kind=provider_kind,
+            model_name=model_name,
+            base_url=base_url,
+            temperature=temperature,
+            timeout_seconds=timeout_seconds,
+        ),
+    )
     batch_payload = batch_result_to_dict(batch_result)
 
     payload: dict[str, Any] = {
@@ -27,6 +50,8 @@ def run_reproducible_experiment(
             "scenario_count": scenario_count,
             "seed": seed,
             "max_rounds": max_rounds,
+            "provider_kind": provider_kind,
+            "model_name": model_name if provider_kind == "ollama" else None,
         },
         "scenarios": [scenario_to_dict(scenario) for scenario in scenarios],
         "summary": batch_payload["summary"],
@@ -51,12 +76,34 @@ def write_experiment_outputs(
     scenario_count: int = 10,
     seed: int = 42,
     max_rounds: int = 5,
+    provider_kind: ProviderKind = "mock",
+    model_name: str = "gemma3:27b",
+    base_url: str = "http://localhost:11434",
+    temperature: float = 0.2,
+    timeout_seconds: float = 60.0,
 ) -> dict[str, Path]:
     """Run an experiment and write summary plus individual outputs."""
 
     output_dir.mkdir(parents=True, exist_ok=True)
     scenarios = generate_simulated_scenarios(count=scenario_count, seed=seed)
-    batch_result = run_batch_simulation(scenarios=scenarios, max_rounds=max_rounds)
+    batch_result = run_batch_simulation(
+        scenarios=scenarios,
+        max_rounds=max_rounds,
+        buyer_provider_factory=lambda: create_provider(
+            provider_kind=provider_kind,
+            model_name=model_name,
+            base_url=base_url,
+            temperature=temperature,
+            timeout_seconds=timeout_seconds,
+        ),
+        seller_provider_factory=lambda: create_provider(
+            provider_kind=provider_kind,
+            model_name=model_name,
+            base_url=base_url,
+            temperature=temperature,
+            timeout_seconds=timeout_seconds,
+        ),
+    )
     full_payload = batch_result_to_dict(batch_result)
 
     summary_path = output_dir / "summary.json"
@@ -67,6 +114,8 @@ def write_experiment_outputs(
             "scenario_count": scenario_count,
             "seed": seed,
             "max_rounds": max_rounds,
+            "provider_kind": provider_kind,
+            "model_name": model_name if provider_kind == "ollama" else None,
         },
         "summary": full_payload["summary"],
     }

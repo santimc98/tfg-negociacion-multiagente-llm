@@ -32,3 +32,15 @@
 - Se añadió generación reproducible de múltiples escenarios simulados mediante `generate_simulated_scenarios(count, seed)`. Las variaciones afectan precios, cantidades y plazos manteniendo coherencia entre restricciones públicas, preferencias y guardrails.
 - Se añadió `experiments.runner` como utilidad de evaluación académica: genera escenarios, ejecuta batch simulation y exporta resumen e individuales a JSON. No busca cubrir necesidades de producción.
 - La exportación agregada se mantiene como JSON simple con `summary` y `runs`, para facilitar análisis posterior con herramientas externas.
+
+## 2026-04-20 - Integración controlada de Ollama como proveedor LLM local
+
+- Se añadió `OllamaNegotiationProvider` como proveedor opcional, manteniendo `MockNegotiationProvider` como baseline determinista. Esto permite comparar un comportamiento controlado contra un proveedor LLM local sin cambiar el motor.
+- Se eligió Ollama porque ofrece ejecución local, reduce dependencia de servicios externos y facilita experimentos reproducibles en un entorno universitario. El nombre del modelo, URL, temperatura y timeout son configurables.
+- El proveedor usa `/api/chat` y solicita salida estructurada JSON mediante un esquema. La acción esperada contiene `action_type`, `target_offer_id`, `offer_terms` y `rationale`.
+- El motor sigue siendo la autoridad del sistema. El LLM no valida restricciones públicas, guardrails privados, referencias de propuestas, rechazos ni aceptación de acuerdos; solo emite una acción candidata.
+- Se añadió `llm.action_parser` como frontera explícita entre texto/modelo y dominio. El parser convierte JSON a `NegotiationAction` y rechaza tipos básicos incorrectos antes de entregar la acción al motor.
+- Si Ollama falla o devuelve JSON malformado, el proveedor genera una acción intencionalmente inválida. El motor la trata como `invalid_provider_output`, preservando trazabilidad y evitando que errores del LLM rompan el flujo.
+- Se añadió `llm.factory.create_provider(...)` para seleccionar `mock` u `ollama` desde runners o demos sin acoplar el resto del sistema a una implementación concreta.
+- Se añadió `src/run_ollama_demo.py` como utilidad mínima de ejecución local. No se añade interfaz gráfica en esta fase.
+- Limitación actual: no hay reintentos ni reparación automática de respuestas LLM. Esta decisión favorece robustez y trazabilidad frente a sofisticación prematura.

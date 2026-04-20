@@ -390,8 +390,13 @@ class NegotiationEngine:
         validation: ValidationResult,
         negotiation_state: str,
     ) -> str:
+        action_type = (
+            action.action_type.value
+            if hasattr(action.action_type, "value")
+            else str(action.action_type)
+        )
         if not validation.is_valid:
-            return f"{action.action_type.value} invalid: {'; '.join(validation.errors)}"
+            return f"{action_type} invalid: {'; '.join(validation.errors)}"
         if action.action_type in {NegotiationActionType.PROPOSE, NegotiationActionType.COUNTER}:
             return f"{action.action_type.value} accepted as valid proposal {action.proposal_id}"
         if action.action_type == NegotiationActionType.REJECT:
