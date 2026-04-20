@@ -1,0 +1,10 @@
+[project]
+name = "supply-negotiation-prototype"
+version = "0.1.0"
+description = "Prototype core for automated buyer-seller negotiation in supply chain scenarios."
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
