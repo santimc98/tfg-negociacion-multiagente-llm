@@ -21,6 +21,8 @@ src/
   scenarios/
     generator.py
     batch.py
+  experiments/
+    runner.py
   llm/
     provider.py
   main.py
@@ -65,12 +67,16 @@ La negociación se modela mediante acciones explícitas:
 
 Cada propuesta o contraoferta válida recibe un identificador. `PROPOSE` inicia una propuesta sin referencia previa; `COUNTER`, `ACCEPT` y `REJECT` deben referenciar una propuesta válida de la contraparte. `WALK_AWAY` representa una salida terminal genérica.
 
-Un acuerdo solo se crea cuando un agente acepta explícitamente la última propuesta válida de la contraparte y esos términos respetan también sus guardrails privados. El acuerdo conserva exactamente los términos aceptados.
+`REJECT` significa rechazo específico de una propuesta concreta. Una propuesta rechazada no puede aceptarse más adelante; si se quiere plantear algo igual o parecido debe emitirse como una nueva propuesta con nuevo `proposal_id`.
+
+Un acuerdo solo se crea cuando un agente acepta explícitamente la última propuesta válida, no rechazada, de la contraparte y esos términos respetan también sus guardrails privados. El acuerdo conserva exactamente los términos aceptados.
 
 Las métricas incluyen utilidad de comprador y vendedor, utilidad conjunta, viabilidad privada por agente y diferencia absoluta entre utilidades (`agreement_balance_gap`).
 
-Cada turno guarda un snapshot del estado posterior: última propuesta válida por agente, propuestas rechazadas, propuesta activa y motivo del último cambio de estado. Esto permite reconstruir la evolución de la negociación sin inferirla desde texto libre.
+Cada turno guarda un snapshot del estado posterior: última propuesta válida por agente, propuestas activas, propuestas rechazadas, propuestas aceptadas, propuesta activa principal y motivo del último cambio de estado. Esto permite reconstruir la evolución de la negociación sin inferirla desde texto libre.
 
 El módulo `negotiation.exporter` exporta resultados completos a JSON con escenario, historial, acuerdo, métricas y motivo de parada. El módulo `scenarios.batch` ejecuta lotes de escenarios simulados y devuelve métricas agregadas para evaluación experimental.
+
+El módulo `scenarios.generator` incluye `generate_simulated_scenarios(...)` para crear escenarios reproducibles con variaciones controladas en precios, cantidades y plazos. El módulo `experiments.runner` combina generación, batch simulation y exportación JSON para ejecuciones experimentales simples del TFG.
 
 La implementación usa un `MockNegotiationProvider` para simular acciones. Más adelante puede sustituirse por un proveedor conectado a un LLM local open-source manteniendo la misma interfaz.

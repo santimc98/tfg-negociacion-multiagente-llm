@@ -66,6 +66,7 @@ def validate_action(
     scenario: Scenario,
     valid_offer_ids: Container[str] | None = None,
     proposal_owner_by_id: Mapping[str, AgentRole] | None = None,
+    rejected_offer_ids: Container[str] | None = None,
 ) -> ValidationResult:
     """Validate action structure and referenced proposal IDs.
 
@@ -100,6 +101,7 @@ def validate_action(
                     action=action,
                     valid_offer_ids=valid_offer_ids,
                     proposal_owner_by_id=proposal_owner_by_id,
+                    rejected_offer_ids=None,
                     action_name="COUNTER",
                 )
             )
@@ -113,6 +115,7 @@ def validate_action(
                     action=action,
                     valid_offer_ids=valid_offer_ids,
                     proposal_owner_by_id=proposal_owner_by_id,
+                    rejected_offer_ids=rejected_offer_ids,
                     action_name="ACCEPT",
                 )
             )
@@ -128,6 +131,7 @@ def validate_action(
                     action=action,
                     valid_offer_ids=valid_offer_ids,
                     proposal_owner_by_id=proposal_owner_by_id,
+                    rejected_offer_ids=None,
                     action_name="REJECT",
                 )
             )
@@ -220,6 +224,7 @@ def _validate_target_reference(
     action: NegotiationAction,
     valid_offer_ids: Container[str] | None,
     proposal_owner_by_id: Mapping[str, AgentRole] | None,
+    rejected_offer_ids: Container[str] | None,
     action_name: str,
 ) -> tuple[str, ...]:
     errors: list[str] = []
@@ -233,5 +238,8 @@ def _validate_target_reference(
     if proposal_owner_by_id is not None and action.target_offer_id in proposal_owner_by_id:
         if proposal_owner_by_id[action.target_offer_id] == action.agent_role:
             errors.append(f"{action_name} must target a proposal from the counterparty")
+
+    if rejected_offer_ids is not None and action.target_offer_id in rejected_offer_ids:
+        errors.append(f"{action_name} must not target a rejected proposal")
 
     return tuple(errors)

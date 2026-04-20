@@ -22,3 +22,13 @@
 - Se añadió `negotiation.exporter` para producir JSON estructurado con escenario, historial, acuerdo, métricas y `stopped_reason`. La serialización convierte fechas y enums a valores JSON nativos.
 - Se añadió `scenarios.batch` para ejecutar múltiples negociaciones sobre escenarios simulados. El batch crea proveedores nuevos por ejecución para evitar estado accidental entre negociaciones.
 - El resumen agregado usa tasas y medias simples: total de ejecuciones, tasa de acuerdos, tasa de acuerdos públicos y privadamente viables, rondas medias, utilidades medias y balance medio.
+
+## 2026-04-20 - Semántica cerrada de REJECT y runner experimental reproducible
+
+- `REJECT` queda definido como rechazo específico e irreversible de una propuesta concreta. La propuesta permanece en el historial para trazabilidad, pero no puede aceptarse posteriormente.
+- Si una parte quiere volver a plantear términos equivalentes a una propuesta rechazada, debe emitir una nueva acción `PROPOSE` o `COUNTER` con un nuevo `proposal_id`. Esto evita ambigüedad entre identidad de propuesta y equivalencia de términos.
+- El motor y el validador bloquean `ACCEPT` sobre propuestas rechazadas. La comprobación se mantiene junto al resto de reglas de aceptación: propuesta válida, contraparte, última propuesta válida de esa contraparte y guardrails privados.
+- `NegotiationState` ahora distingue propuestas activas, rechazadas y aceptadas mediante colecciones simples de identificadores. Se conserva `active_offer_id` como acceso rápido a la propuesta activa principal.
+- Se añadió generación reproducible de múltiples escenarios simulados mediante `generate_simulated_scenarios(count, seed)`. Las variaciones afectan precios, cantidades y plazos manteniendo coherencia entre restricciones públicas, preferencias y guardrails.
+- Se añadió `experiments.runner` como utilidad de evaluación académica: genera escenarios, ejecuta batch simulation y exporta resumen e individuales a JSON. No busca cubrir necesidades de producción.
+- La exportación agregada se mantiene como JSON simple con `summary` y `runs`, para facilitar análisis posterior con herramientas externas.

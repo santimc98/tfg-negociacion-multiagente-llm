@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import date
+import random
+from datetime import date, timedelta
 
 from negotiation.models import (
     AgentPreferences,
@@ -49,6 +50,74 @@ def create_basic_scenario() -> Scenario:
             seller_earliest_acceptable_deadline=date(2026, 5, 18),
         ),
     )
+
+
+def generate_simulated_scenarios(count: int, seed: int = 42) -> list[Scenario]:
+    """Generate reproducible scenarios with controlled small variations."""
+
+    if count < 0:
+        raise ValueError("count must be non-negative")
+
+    rng = random.Random(seed)
+    scenarios: list[Scenario] = []
+    base_date = date(2026, 5, 10)
+
+    for index in range(count):
+        min_price = round(75.0 + rng.uniform(-5.0, 8.0) + index * 0.5, 2)
+        price_span = round(38.0 + rng.uniform(0.0, 12.0), 2)
+        max_price = round(min_price + price_span, 2)
+        min_quantity = rng.randint(40, 70)
+        max_quantity = min_quantity + rng.randint(120, 170)
+        earliest_deadline = base_date + timedelta(days=rng.randint(0, 5))
+        latest_deadline = earliest_deadline + timedelta(days=rng.randint(25, 40))
+
+        buyer_target_quantity = min_quantity + rng.randint(45, 70)
+        seller_target_quantity = buyer_target_quantity + rng.randint(10, 35)
+        seller_target_quantity = min(seller_target_quantity, max_quantity)
+        buyer_target_deadline = earliest_deadline + timedelta(days=rng.randint(8, 14))
+        seller_target_deadline = min(
+            latest_deadline,
+            buyer_target_deadline + timedelta(days=rng.randint(5, 12)),
+        )
+        seller_mock_price = round(max_price - price_span * 0.25, 2)
+
+        scenarios.append(
+            Scenario(
+                scenario_id=f"simulated-supply-{index + 1:03d}",
+                description="Controlled simulated supply negotiation scenario.",
+                constraints=PublicScenarioConstraints(
+                    min_unit_price=min_price,
+                    max_unit_price=max_price,
+                    min_quantity=min_quantity,
+                    max_quantity=max_quantity,
+                    earliest_delivery_deadline=earliest_deadline,
+                    latest_delivery_deadline=latest_deadline,
+                ),
+                buyer_preferences=AgentPreferences(
+                    target_unit_price=round(min_price + price_span * 0.25, 2),
+                    target_quantity=buyer_target_quantity,
+                    target_delivery_deadline=buyer_target_deadline,
+                ),
+                seller_preferences=AgentPreferences(
+                    target_unit_price=seller_mock_price,
+                    target_quantity=seller_target_quantity,
+                    target_delivery_deadline=seller_target_deadline,
+                ),
+                buyer_guardrails=BuyerGuardrails(
+                    buyer_max_acceptable_unit_price=round(seller_mock_price + 1.0, 2),
+                    buyer_min_acceptable_quantity=buyer_target_quantity,
+                    buyer_latest_acceptable_deadline=buyer_target_deadline + timedelta(days=3),
+                ),
+                seller_guardrails=SellerGuardrails(
+                    seller_min_acceptable_unit_price=round(min_price + price_span * 0.20, 2),
+                    seller_min_acceptable_quantity=min(buyer_target_quantity, seller_target_quantity),
+                    seller_earliest_acceptable_deadline=buyer_target_deadline
+                    - timedelta(days=2),
+                ),
+            )
+        )
+
+    return scenarios
 
 
 def scenario_to_dict(scenario: Scenario) -> JsonDict:

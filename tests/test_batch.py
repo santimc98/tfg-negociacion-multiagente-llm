@@ -1,9 +1,10 @@
 import unittest
+import json
 
 import context  # noqa: F401
 
-from scenarios.batch import run_batch_simulation
-from scenarios.generator import create_basic_scenario
+from scenarios.batch import batch_result_to_json, run_batch_simulation
+from scenarios.generator import create_basic_scenario, generate_simulated_scenarios
 
 
 class BatchSimulationTest(unittest.TestCase):
@@ -28,6 +29,16 @@ class BatchSimulationTest(unittest.TestCase):
         self.assertEqual(batch.summary.agreement_rate, 0.0)
         self.assertEqual(batch.summary.feasible_agreement_rate, 0.0)
         self.assertEqual(batch.summary.average_rounds, 0.0)
+
+    def test_batch_result_exports_aggregate_json(self) -> None:
+        scenarios = generate_simulated_scenarios(count=3, seed=7)
+        batch = run_batch_simulation(scenarios, max_rounds=5)
+
+        payload = json.loads(batch_result_to_json(batch, include_individual_results=False))
+
+        self.assertIn("summary", payload)
+        self.assertEqual(payload["summary"]["total_runs"], 3)
+        self.assertEqual(payload["runs"], [])
 
 
 if __name__ == "__main__":

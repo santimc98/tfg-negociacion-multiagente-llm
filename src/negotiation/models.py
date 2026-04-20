@@ -116,7 +116,9 @@ class NegotiationState:
     """Snapshot of the operational negotiation state."""
 
     latest_valid_proposal_by_agent: dict[AgentRole, str] = field(default_factory=dict)
+    active_offer_ids: tuple[str, ...] = ()
     rejected_offer_ids: tuple[str, ...] = ()
+    accepted_offer_ids: tuple[str, ...] = ()
     active_offer_id: str | None = None
     last_state_change_reason: str = "initialized"
 

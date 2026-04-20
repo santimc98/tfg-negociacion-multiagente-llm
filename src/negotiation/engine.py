@@ -65,7 +65,9 @@ class NegotiationEngine:
         turn_log: list[TurnLog] = []
         proposals: dict[str, StoredProposal] = {}
         latest_valid_proposal_by_agent: dict[AgentRole, str] = {}
+        active_offer_ids: set[str] = set()
         rejected_offer_ids: set[str] = set()
+        accepted_offer_ids: set[str] = set()
         active_offer_id: str | None = None
         last_state_change_reason = "initialized"
         proposal_sequence = 0
@@ -81,6 +83,7 @@ class NegotiationEngine:
                     scenario,
                     valid_offer_ids=proposals.keys(),
                     proposal_owner_by_id=proposal_owner_by_id,
+                    rejected_offer_ids=rejected_offer_ids,
                 )
 
                 if validation.is_valid and action.action_type in {
@@ -97,6 +100,7 @@ class NegotiationEngine:
                         terms=action.offer_terms,
                     )
                     latest_valid_proposal_by_agent[role] = proposal_id
+                    active_offer_ids.add(proposal_id)
                     active_offer_id = proposal_id
                     last_state_change_reason = f"{action.action_type.value} registered as {proposal_id}"
 
@@ -106,6 +110,7 @@ class NegotiationEngine:
                         role=role,
                         proposals=proposals,
                         latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                        rejected_offer_ids=rejected_offer_ids,
                     )
                     if not context_validation.is_valid:
                         validation = context_validation
@@ -120,7 +125,9 @@ class NegotiationEngine:
                             negotiation_state="invalid_provider_output",
                             proposals=proposals,
                             latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                            active_offer_ids=active_offer_ids,
                             rejected_offer_ids=rejected_offer_ids,
+                            accepted_offer_ids=accepted_offer_ids,
                             active_offer_id=active_offer_id,
                             last_state_change_reason="invalid provider output",
                         )
@@ -142,7 +149,9 @@ class NegotiationEngine:
                             negotiation_state="walk_away",
                             proposals=proposals,
                             latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                            active_offer_ids=active_offer_ids,
                             rejected_offer_ids=rejected_offer_ids,
+                            accepted_offer_ids=accepted_offer_ids,
                             active_offer_id=active_offer_id,
                             last_state_change_reason="walk-away action received",
                         )
@@ -157,6 +166,7 @@ class NegotiationEngine:
                 if action.action_type == NegotiationActionType.REJECT:
                     assert action.target_offer_id is not None
                     rejected_offer_ids.add(action.target_offer_id)
+                    active_offer_ids.discard(action.target_offer_id)
                     if active_offer_id == action.target_offer_id:
                         active_offer_id = None
                     last_state_change_reason = f"{role} rejected {action.target_offer_id}"
@@ -169,7 +179,9 @@ class NegotiationEngine:
                             negotiation_state="running",
                             proposals=proposals,
                             latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                            active_offer_ids=active_offer_ids,
                             rejected_offer_ids=rejected_offer_ids,
+                            accepted_offer_ids=accepted_offer_ids,
                             active_offer_id=active_offer_id,
                             last_state_change_reason=last_state_change_reason,
                         )
@@ -194,7 +206,9 @@ class NegotiationEngine:
                                 negotiation_state="invalid_provider_output",
                                 proposals=proposals,
                                 latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                                active_offer_ids=active_offer_ids,
                                 rejected_offer_ids=rejected_offer_ids,
+                                accepted_offer_ids=accepted_offer_ids,
                                 active_offer_id=active_offer_id,
                                 last_state_change_reason="private acceptance guardrail violation",
                             )
@@ -224,7 +238,9 @@ class NegotiationEngine:
                                 negotiation_state="invalid_provider_output",
                                 proposals=proposals,
                                 latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                                active_offer_ids=active_offer_ids,
                                 rejected_offer_ids=rejected_offer_ids,
+                                accepted_offer_ids=accepted_offer_ids,
                                 active_offer_id=active_offer_id,
                                 last_state_change_reason="invalid agreement",
                             )
@@ -236,6 +252,8 @@ class NegotiationEngine:
                             stopped_reason="invalid_provider_output",
                         )
 
+                    accepted_offer_ids.add(proposal.proposal_id)
+                    active_offer_ids.clear()
                     turn_log.append(
                         self._build_turn_log(
                             round_number=round_number,
@@ -245,8 +263,10 @@ class NegotiationEngine:
                             negotiation_state="agreement_reached",
                             proposals=proposals,
                             latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                            active_offer_ids=active_offer_ids,
                             rejected_offer_ids=rejected_offer_ids,
-                            active_offer_id=proposal.proposal_id,
+                            accepted_offer_ids=accepted_offer_ids,
+                            active_offer_id=None,
                             last_state_change_reason=f"{role} accepted {proposal.proposal_id}",
                         )
                     )
@@ -266,7 +286,9 @@ class NegotiationEngine:
                         negotiation_state="running",
                         proposals=proposals,
                         latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                        active_offer_ids=active_offer_ids,
                         rejected_offer_ids=rejected_offer_ids,
+                        accepted_offer_ids=accepted_offer_ids,
                         active_offer_id=active_offer_id,
                         last_state_change_reason=last_state_change_reason,
                     )
@@ -285,13 +307,17 @@ class NegotiationEngine:
         role: AgentRole,
         proposals: dict[str, StoredProposal],
         latest_valid_proposal_by_agent: dict[AgentRole, str],
+        rejected_offer_ids: set[str],
     ) -> ValidationResult:
-        """Check that ACCEPT targets the counterparty's latest valid proposal."""
+        """Check that ACCEPT targets a live counterparty proposal."""
 
         errors: list[str] = []
 
         if action.target_offer_id is None:
             return ValidationResult(False, ("ACCEPT requires target_offer_id",))
+
+        if action.target_offer_id in rejected_offer_ids:
+            errors.append("ACCEPT must not target a rejected proposal")
 
         proposal = proposals[action.target_offer_id]
         if proposal.proposer == role:
@@ -312,7 +338,9 @@ class NegotiationEngine:
         negotiation_state: str,
         proposals: dict[str, StoredProposal],
         latest_valid_proposal_by_agent: dict[AgentRole, str],
+        active_offer_ids: set[str],
         rejected_offer_ids: set[str],
+        accepted_offer_ids: set[str],
         active_offer_id: str | None,
         last_state_change_reason: str,
     ) -> TurnLog:
@@ -330,7 +358,9 @@ class NegotiationEngine:
             result_summary=self._result_summary(action, validation, negotiation_state),
             state_after=self._state_snapshot(
                 latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                active_offer_ids=active_offer_ids,
                 rejected_offer_ids=rejected_offer_ids,
+                accepted_offer_ids=accepted_offer_ids,
                 active_offer_id=active_offer_id,
                 last_state_change_reason=last_state_change_reason,
             ),
@@ -339,13 +369,17 @@ class NegotiationEngine:
     def _state_snapshot(
         self,
         latest_valid_proposal_by_agent: dict[AgentRole, str],
+        active_offer_ids: set[str],
         rejected_offer_ids: set[str],
+        accepted_offer_ids: set[str],
         active_offer_id: str | None,
         last_state_change_reason: str,
     ) -> NegotiationState:
         return NegotiationState(
             latest_valid_proposal_by_agent=dict(latest_valid_proposal_by_agent),
+            active_offer_ids=tuple(sorted(active_offer_ids)),
             rejected_offer_ids=tuple(sorted(rejected_offer_ids)),
+            accepted_offer_ids=tuple(sorted(accepted_offer_ids)),
             active_offer_id=active_offer_id,
             last_state_change_reason=last_state_change_reason,
         )

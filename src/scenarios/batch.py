@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Callable, Iterable
+import json
+from dataclasses import asdict, dataclass
+from typing import Any, Callable, Iterable
 
 from llm.provider import MockNegotiationProvider
 from negotiation.engine import ActionProvider, NegotiationEngine
+from negotiation.exporter import negotiation_result_to_dict
 from negotiation.metrics import NegotiationMetrics, calculate_metrics
 from negotiation.models import NegotiationResult, Scenario
 
@@ -66,6 +68,34 @@ def run_batch_simulation(
         runs=tuple(runs),
         summary=_build_summary(runs),
     )
+
+
+def batch_result_to_dict(batch_result: BatchSimulationResult) -> dict[str, Any]:
+    """Convert a batch result into JSON-compatible aggregate data."""
+
+    return {
+        "summary": asdict(batch_result.summary),
+        "runs": [
+            {
+                "result": negotiation_result_to_dict(run.result),
+                "metrics": asdict(run.metrics),
+            }
+            for run in batch_result.runs
+        ],
+    }
+
+
+def batch_result_to_json(
+    batch_result: BatchSimulationResult,
+    include_individual_results: bool = True,
+    indent: int | None = 2,
+) -> str:
+    """Serialize aggregate batch output to JSON."""
+
+    payload = batch_result_to_dict(batch_result)
+    if not include_individual_results:
+        payload = {"summary": payload["summary"], "runs": []}
+    return json.dumps(payload, indent=indent, sort_keys=True)
 
 
 def _build_summary(runs: list[BatchRun]) -> BatchSummary:

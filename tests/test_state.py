@@ -39,6 +39,22 @@ class ProposeThenRejectBuyer:
         )
 
 
+class ProposeThenContinueBuyer:
+    def generate_action(
+        self,
+        role: AgentRole,
+        scenario: Scenario,
+        round_number: int,
+        history: tuple[TurnLog, ...],
+    ) -> NegotiationAction:
+        del role, scenario, round_number, history
+        return NegotiationAction(
+            agent_role="buyer",
+            action_type=NegotiationActionType.PROPOSE,
+            offer_terms=valid_terms(),
+        )
+
+
 class RejectLatestSeller:
     def generate_action(
         self,
@@ -68,6 +84,33 @@ class RejectLatestSeller:
         )
 
 
+class RejectThenAcceptRejectedSeller:
+    def generate_action(
+        self,
+        role: AgentRole,
+        scenario: Scenario,
+        round_number: int,
+        history: tuple[TurnLog, ...],
+    ) -> NegotiationAction:
+        del scenario
+        if round_number == 1:
+            target_offer_id = next(
+                turn.action.proposal_id
+                for turn in reversed(history)
+                if turn.agent_role != role and turn.action.proposal_id is not None
+            )
+            return NegotiationAction(
+                agent_role=role,
+                action_type=NegotiationActionType.REJECT,
+                target_offer_id=target_offer_id,
+            )
+        return NegotiationAction(
+            agent_role=role,
+            action_type=NegotiationActionType.ACCEPT,
+            target_offer_id="O1",
+        )
+
+
 class NegotiationStateTest(unittest.TestCase):
     def test_state_tracks_latest_valid_proposal_and_active_offer(self) -> None:
         scenario = create_basic_scenario()
@@ -81,6 +124,7 @@ class NegotiationStateTest(unittest.TestCase):
 
         self.assertIsNotNone(first_turn_state)
         self.assertEqual(first_turn_state.latest_valid_proposal_by_agent["buyer"], "O1")
+        self.assertEqual(first_turn_state.active_offer_ids, ("O1",))
         self.assertEqual(first_turn_state.active_offer_id, "O1")
         self.assertEqual(result.turn_log[0].target_offer_id_resolved, None)
         self.assertIn("valid proposal O1", result.turn_log[0].result_summary)
@@ -97,10 +141,30 @@ class NegotiationStateTest(unittest.TestCase):
 
         self.assertIsNotNone(second_turn_state)
         self.assertEqual(second_turn_state.rejected_offer_ids, ("O1",))
+        self.assertEqual(second_turn_state.active_offer_ids, ())
         self.assertIsNone(second_turn_state.active_offer_id)
         self.assertEqual(result.turn_log[1].target_offer_id_resolved, True)
         self.assertEqual(result.turn_log[1].result_summary, "REJECT registered for proposal O1")
         self.assertIn("seller rejected O1", second_turn_state.last_state_change_reason)
+
+    def test_rejected_proposal_cannot_be_accepted_later(self) -> None:
+        scenario = create_basic_scenario()
+        result = NegotiationEngine(max_rounds=2).run(
+            scenario,
+            buyer_provider=ProposeThenContinueBuyer(),
+            seller_provider=RejectThenAcceptRejectedSeller(),
+        )
+
+        final_turn = result.turn_log[-1]
+        final_state = final_turn.state_after
+
+        self.assertFalse(result.agreement_reached)
+        self.assertEqual(result.stopped_reason, "invalid_provider_output")
+        self.assertFalse(final_turn.is_valid)
+        self.assertIn("ACCEPT must not target a rejected proposal", final_turn.errors)
+        self.assertIsNotNone(final_state)
+        self.assertIn("O1", final_state.rejected_offer_ids)
+        self.assertEqual(final_state.accepted_offer_ids, ())
 
 
 if __name__ == "__main__":

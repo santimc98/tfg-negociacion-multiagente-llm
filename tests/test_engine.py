@@ -199,6 +199,9 @@ class EngineTest(unittest.TestCase):
         self.assertEqual(result.agreement.terms, accepted_offer.offer_terms)
         self.assertEqual(result.turn_log[-1].action.action_type, NegotiationActionType.ACCEPT)
         self.assertEqual(result.turn_log[-1].negotiation_state, "agreement_reached")
+        self.assertIsNotNone(result.turn_log[-1].state_after)
+        self.assertEqual(result.turn_log[-1].state_after.accepted_offer_ids, ("O2",))
+        self.assertEqual(result.turn_log[-1].state_after.active_offer_ids, ())
 
     def test_overlapping_offers_do_not_create_automatic_agreement(self) -> None:
         scenario = create_basic_scenario()
