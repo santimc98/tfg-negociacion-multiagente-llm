@@ -2,23 +2,42 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass, replace
 from typing import Protocol
 
-from negotiation.models import AgentRole, Agreement, NegotiationResult, Offer, Scenario, TurnLog
-from negotiation.validator import validate_agreement, validate_offer
+from negotiation.models import (
+    AgentRole,
+    Agreement,
+    NegotiationAction,
+    NegotiationActionType,
+    NegotiationResult,
+    OfferTerms,
+    Scenario,
+    TurnLog,
+)
+from negotiation.validator import ValidationResult, validate_action, validate_agreement
 
 
-class OfferProvider(Protocol):
+class ActionProvider(Protocol):
     """Interface expected from mock providers and future LLM providers."""
 
-    def generate_offer(
+    def generate_action(
         self,
         role: AgentRole,
         scenario: Scenario,
         round_number: int,
         history: tuple[TurnLog, ...],
-    ) -> Offer:
-        """Generate the next offer for one role."""
+    ) -> NegotiationAction:
+        """Generate the next protocol action for one role."""
+
+
+@dataclass(frozen=True)
+class StoredProposal:
+    """Valid proposal registered by the engine."""
+
+    proposal_id: str
+    proposer: AgentRole
+    terms: OfferTerms
 
 
 class NegotiationEngine:
@@ -32,82 +51,191 @@ class NegotiationEngine:
     def run(
         self,
         scenario: Scenario,
-        buyer_provider: OfferProvider,
-        seller_provider: OfferProvider,
+        buyer_provider: ActionProvider,
+        seller_provider: ActionProvider,
     ) -> NegotiationResult:
-        """Execute negotiation turns until agreement or round limit."""
+        """Execute negotiation turns until agreement, walk-away or round limit."""
 
         turn_log: list[TurnLog] = []
-        latest_valid_offers: dict[AgentRole, Offer] = {}
+        proposals: dict[str, StoredProposal] = {}
+        latest_valid_proposal_by_agent: dict[AgentRole, str] = {}
+        proposal_sequence = 0
 
         for round_number in range(1, self.max_rounds + 1):
             for role, provider in (("buyer", buyer_provider), ("seller", seller_provider)):
-                offer = provider.generate_offer(role, scenario, round_number, tuple(turn_log))
-                validation = validate_offer(offer, scenario)
-                turn_log.append(
-                    TurnLog(
-                        round_number=round_number,
-                        agent_role=role,
-                        offer=offer,
-                        is_valid=validation.is_valid,
-                        errors=validation.errors,
+                action = provider.generate_action(role, scenario, round_number, tuple(turn_log))
+                validation = validate_action(action, scenario, valid_offer_ids=proposals.keys())
+
+                if validation.is_valid and action.action_type in {
+                    NegotiationActionType.PROPOSE,
+                    NegotiationActionType.COUNTER,
+                }:
+                    proposal_sequence += 1
+                    proposal_id = f"O{proposal_sequence}"
+                    action = replace(action, proposal_id=proposal_id)
+                    proposals[proposal_id] = StoredProposal(
+                        proposal_id=proposal_id,
+                        proposer=role,
+                        terms=action.offer_terms,
                     )
-                )
+                    latest_valid_proposal_by_agent[role] = proposal_id
+
+                if validation.is_valid and action.action_type == NegotiationActionType.ACCEPT:
+                    context_validation = self._validate_accept_context(
+                        action=action,
+                        role=role,
+                        proposals=proposals,
+                        latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                    )
+                    if not context_validation.is_valid:
+                        validation = context_validation
 
                 if not validation.is_valid:
-                    continue
-
-                latest_valid_offers[role] = offer
-                agreement = self._build_agreement_if_compatible(
-                    buyer_offer=latest_valid_offers.get("buyer"),
-                    seller_offer=latest_valid_offers.get("seller"),
-                    round_number=round_number,
-                    scenario=scenario,
-                )
-                if agreement is not None:
-                    return NegotiationResult(
+                    turn_log.append(
+                        self._build_turn_log(
+                            round_number=round_number,
+                            role=role,
+                            action=action,
+                            validation=validation,
+                            negotiation_state="invalid_provider_output",
+                        )
+                    )
+                    return self._result(
                         scenario=scenario,
-                        max_rounds=self.max_rounds,
+                        agreement=None,
+                        turn_log=turn_log,
+                        stopped_reason="invalid_provider_output",
+                    )
+
+                if action.action_type == NegotiationActionType.WALK_AWAY:
+                    turn_log.append(
+                        self._build_turn_log(
+                            round_number=round_number,
+                            role=role,
+                            action=action,
+                            validation=validation,
+                            negotiation_state="walk_away",
+                        )
+                    )
+                    return self._result(
+                        scenario=scenario,
+                        agreement=None,
+                        turn_log=turn_log,
+                        stopped_reason="walk_away",
+                    )
+
+                if action.action_type == NegotiationActionType.ACCEPT:
+                    proposal = proposals[action.target_offer_id]
+                    agreement = Agreement(
+                        terms=proposal.terms,
+                        accepted_offer_id=proposal.proposal_id,
+                        proposed_by=proposal.proposer,
+                        accepted_by=role,
+                        reached_at_round=round_number,
+                    )
+                    agreement_validation = validate_agreement(agreement, scenario)
+                    if not agreement_validation.is_valid:
+                        turn_log.append(
+                            self._build_turn_log(
+                                round_number=round_number,
+                                role=role,
+                                action=action,
+                                validation=agreement_validation,
+                                negotiation_state="invalid_provider_output",
+                            )
+                        )
+                        return self._result(
+                            scenario=scenario,
+                            agreement=None,
+                            turn_log=turn_log,
+                            stopped_reason="invalid_provider_output",
+                        )
+
+                    turn_log.append(
+                        self._build_turn_log(
+                            round_number=round_number,
+                            role=role,
+                            action=action,
+                            validation=validation,
+                            negotiation_state="agreement_reached",
+                        )
+                    )
+                    return self._result(
+                        scenario=scenario,
                         agreement=agreement,
-                        turn_log=tuple(turn_log),
+                        turn_log=turn_log,
                         stopped_reason="agreement_reached",
                     )
 
-        return NegotiationResult(
+                turn_log.append(
+                    self._build_turn_log(
+                        round_number=round_number,
+                        role=role,
+                        action=action,
+                        validation=validation,
+                        negotiation_state="running",
+                    )
+                )
+
+        return self._result(
             scenario=scenario,
-            max_rounds=self.max_rounds,
             agreement=None,
-            turn_log=tuple(turn_log),
+            turn_log=turn_log,
             stopped_reason="max_rounds_reached",
         )
 
-    def _build_agreement_if_compatible(
+    def _validate_accept_context(
         self,
-        buyer_offer: Offer | None,
-        seller_offer: Offer | None,
+        action: NegotiationAction,
+        role: AgentRole,
+        proposals: dict[str, StoredProposal],
+        latest_valid_proposal_by_agent: dict[AgentRole, str],
+    ) -> ValidationResult:
+        """Check that ACCEPT targets the counterparty's latest valid proposal."""
+
+        errors: list[str] = []
+
+        if action.target_offer_id is None:
+            return ValidationResult(False, ("ACCEPT requires target_offer_id",))
+
+        proposal = proposals[action.target_offer_id]
+        if proposal.proposer == role:
+            errors.append("ACCEPT must target a proposal from the counterparty")
+
+        expected_latest_id = latest_valid_proposal_by_agent.get(proposal.proposer)
+        if action.target_offer_id != expected_latest_id:
+            errors.append("ACCEPT must target the latest valid proposal from that agent")
+
+        return ValidationResult(is_valid=not errors, errors=tuple(errors))
+
+    def _build_turn_log(
+        self,
         round_number: int,
-        scenario: Scenario,
-    ) -> Agreement | None:
-        """Create an agreement when the latest valid offers overlap."""
-
-        if buyer_offer is None or seller_offer is None:
-            return None
-
-        price_overlap = buyer_offer.unit_price >= seller_offer.unit_price
-        quantity_overlap = seller_offer.quantity >= buyer_offer.quantity
-        deadline_overlap = seller_offer.delivery_deadline <= buyer_offer.delivery_deadline
-
-        if not (price_overlap and quantity_overlap and deadline_overlap):
-            return None
-
-        agreement = Agreement(
-            unit_price=round((buyer_offer.unit_price + seller_offer.unit_price) / 2, 2),
-            quantity=buyer_offer.quantity,
-            delivery_deadline=seller_offer.delivery_deadline,
-            reached_at_round=round_number,
+        role: AgentRole,
+        action: NegotiationAction,
+        validation: ValidationResult,
+        negotiation_state: str,
+    ) -> TurnLog:
+        return TurnLog(
+            round_number=round_number,
+            agent_role=role,
+            action=action,
+            is_valid=validation.is_valid,
+            errors=validation.errors,
+            negotiation_state=negotiation_state,
         )
 
-        if not validate_agreement(agreement, scenario).is_valid:
-            return None
-
-        return agreement
+    def _result(
+        self,
+        scenario: Scenario,
+        agreement: Agreement | None,
+        turn_log: list[TurnLog],
+        stopped_reason: str,
+    ) -> NegotiationResult:
+        return NegotiationResult(
+            scenario=scenario,
+            max_rounds=self.max_rounds,
+            agreement=agreement,
+            turn_log=tuple(turn_log),
+            stopped_reason=stopped_reason,
+        )

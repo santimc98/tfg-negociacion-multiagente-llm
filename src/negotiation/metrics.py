@@ -51,21 +51,24 @@ def _buyer_utility(agreement: Agreement | None, scenario: Scenario) -> float:
     if agreement is None:
         return 0.0
 
+    constraints = scenario.constraints
+    preferences = scenario.buyer_preferences
+    terms = agreement.terms
     price_score = 1 - _normalized(
-        agreement.unit_price,
-        scenario.min_unit_price,
-        scenario.max_unit_price,
+        terms.unit_price,
+        constraints.min_unit_price,
+        constraints.max_unit_price,
     )
     quantity_score = _target_score(
-        agreement.quantity,
-        scenario.buyer_target_quantity,
-        scenario.min_quantity,
-        scenario.max_quantity,
+        terms.quantity,
+        preferences.target_quantity,
+        constraints.min_quantity,
+        constraints.max_quantity,
     )
     deadline_score = 1 - _date_normalized(
-        agreement.delivery_deadline,
-        scenario.earliest_delivery_deadline,
-        scenario.latest_delivery_deadline,
+        terms.delivery_deadline,
+        constraints.earliest_delivery_deadline,
+        constraints.latest_delivery_deadline,
     )
 
     return round((price_score + quantity_score + deadline_score) / 3, 4)
@@ -75,21 +78,24 @@ def _seller_utility(agreement: Agreement | None, scenario: Scenario) -> float:
     if agreement is None:
         return 0.0
 
+    constraints = scenario.constraints
+    preferences = scenario.seller_preferences
+    terms = agreement.terms
     price_score = _normalized(
-        agreement.unit_price,
-        scenario.min_unit_price,
-        scenario.max_unit_price,
+        terms.unit_price,
+        constraints.min_unit_price,
+        constraints.max_unit_price,
     )
     quantity_score = _target_score(
-        agreement.quantity,
-        scenario.seller_target_quantity,
-        scenario.min_quantity,
-        scenario.max_quantity,
+        terms.quantity,
+        preferences.target_quantity,
+        constraints.min_quantity,
+        constraints.max_quantity,
     )
     deadline_score = _date_normalized(
-        agreement.delivery_deadline,
-        scenario.earliest_delivery_deadline,
-        scenario.latest_delivery_deadline,
+        terms.delivery_deadline,
+        constraints.earliest_delivery_deadline,
+        constraints.latest_delivery_deadline,
     )
 
     return round((price_score + quantity_score + deadline_score) / 3, 4)

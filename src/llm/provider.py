@@ -2,45 +2,91 @@
 
 from __future__ import annotations
 
-from datetime import timedelta
-
-from negotiation.models import AgentRole, Offer, Scenario, TurnLog
+from negotiation.models import (
+    AgentRole,
+    NegotiationAction,
+    NegotiationActionType,
+    OfferTerms,
+    Scenario,
+    TurnLog,
+)
 
 
 class MockNegotiationProvider:
     """Deterministic provider used while LLM integration is not available."""
 
-    def generate_offer(
+    def generate_action(
         self,
         role: AgentRole,
         scenario: Scenario,
         round_number: int,
         history: tuple[TurnLog, ...],
-    ) -> Offer:
-        """Generate a simple concession-based offer."""
+    ) -> NegotiationAction:
+        """Generate a simple action with explicit acceptance."""
 
-        del history
+        latest_counterparty_offer_id = self._latest_counterparty_offer_id(role, history)
+        if role == "buyer" and latest_counterparty_offer_id is not None and round_number >= 2:
+            return NegotiationAction(
+                agent_role=role,
+                action_type=NegotiationActionType.ACCEPT,
+                target_offer_id=latest_counterparty_offer_id,
+                rationale="The seller proposal is acceptable for the simulated buyer.",
+            )
 
-        price_span = scenario.max_unit_price - scenario.min_unit_price
+        return NegotiationAction(
+            agent_role=role,
+            action_type=self._proposal_action_type(latest_counterparty_offer_id),
+            offer_terms=self._build_offer_terms(role, scenario, round_number),
+            target_offer_id=latest_counterparty_offer_id,
+            rationale="Deterministic mock concession.",
+        )
+
+    def _build_offer_terms(
+        self,
+        role: AgentRole,
+        scenario: Scenario,
+        round_number: int,
+    ) -> OfferTerms:
+        constraints = scenario.constraints
+        buyer_preferences = scenario.buyer_preferences
+        seller_preferences = scenario.seller_preferences
+        price_span = constraints.max_unit_price - constraints.min_unit_price
         concession = min(round_number / 4, 1.0)
 
         if role == "buyer":
-            unit_price = scenario.min_unit_price + price_span * concession
-            quantity = scenario.buyer_target_quantity
-            delivery_deadline = scenario.buyer_target_delivery_deadline
+            unit_price = constraints.min_unit_price + price_span * concession
+            quantity = buyer_preferences.target_quantity
+            delivery_deadline = buyer_preferences.target_delivery_deadline
         elif role == "seller":
-            unit_price = scenario.max_unit_price - price_span * concession
-            quantity = max(scenario.buyer_target_quantity, scenario.seller_target_quantity)
-            delivery_deadline = min(
-                scenario.buyer_target_delivery_deadline,
-                scenario.seller_target_delivery_deadline - timedelta(days=round_number),
-            )
+            unit_price = constraints.max_unit_price - price_span * concession
+            quantity = max(buyer_preferences.target_quantity, seller_preferences.target_quantity)
+            delivery_deadline = buyer_preferences.target_delivery_deadline
         else:
             raise ValueError("role must be 'buyer' or 'seller'")
 
-        return Offer(
-            agent_role=role,
+        return OfferTerms(
             unit_price=round(unit_price, 2),
             quantity=quantity,
             delivery_deadline=delivery_deadline,
         )
+
+    def _latest_counterparty_offer_id(
+        self,
+        role: AgentRole,
+        history: tuple[TurnLog, ...],
+    ) -> str | None:
+        for turn in reversed(history):
+            if (
+                turn.agent_role != role
+                and turn.is_valid
+                and turn.action.proposal_id is not None
+                and turn.action.action_type
+                in {NegotiationActionType.PROPOSE, NegotiationActionType.COUNTER}
+            ):
+                return turn.action.proposal_id
+        return None
+
+    def _proposal_action_type(self, target_offer_id: str | None) -> NegotiationActionType:
+        if target_offer_id is None:
+            return NegotiationActionType.PROPOSE
+        return NegotiationActionType.COUNTER

@@ -4,7 +4,7 @@ import unittest
 import context  # noqa: F401
 
 from negotiation.metrics import calculate_metrics
-from negotiation.models import Agreement, NegotiationResult
+from negotiation.models import Agreement, NegotiationResult, OfferTerms
 from scenarios.generator import create_basic_scenario
 
 
@@ -12,9 +12,14 @@ class MetricsTest(unittest.TestCase):
     def test_metrics_for_valid_agreement(self) -> None:
         scenario = create_basic_scenario()
         agreement = Agreement(
-            unit_price=100.0,
-            quantity=100,
-            delivery_deadline=date(2026, 5, 20),
+            terms=OfferTerms(
+                unit_price=100.0,
+                quantity=100,
+                delivery_deadline=date(2026, 5, 20),
+            ),
+            accepted_offer_id="O1",
+            proposed_by="seller",
+            accepted_by="buyer",
             reached_at_round=3,
         )
         result = NegotiationResult(

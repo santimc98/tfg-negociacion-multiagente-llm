@@ -1,16 +1,22 @@
 {
   "scenario_id": "basic-electronics-supply",
   "description": "Buyer negotiates a batch of electronic components with one supplier.",
-  "min_unit_price": 80.0,
-  "max_unit_price": 120.0,
-  "min_quantity": 50,
-  "max_quantity": 200,
-  "earliest_delivery_deadline": "2026-05-10",
-  "latest_delivery_deadline": "2026-06-10",
-  "buyer_target_unit_price": 90.0,
-  "buyer_target_quantity": 100,
-  "buyer_target_delivery_deadline": "2026-05-20",
-  "seller_target_unit_price": 110.0,
-  "seller_target_quantity": 120,
-  "seller_target_delivery_deadline": "2026-05-30"
+  "constraints": {
+    "min_unit_price": 80.0,
+    "max_unit_price": 120.0,
+    "min_quantity": 50,
+    "max_quantity": 200,
+    "earliest_delivery_deadline": "2026-05-10",
+    "latest_delivery_deadline": "2026-06-10"
+  },
+  "buyer_preferences": {
+    "target_unit_price": 90.0,
+    "target_quantity": 100,
+    "target_delivery_deadline": "2026-05-20"
+  },
+  "seller_preferences": {
+    "target_unit_price": 110.0,
+    "target_quantity": 120,
+    "target_delivery_deadline": "2026-05-30"
+  }
 }
