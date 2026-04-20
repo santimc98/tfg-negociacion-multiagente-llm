@@ -18,5 +18,15 @@
     "target_unit_price": 110.0,
     "target_quantity": 120,
     "target_delivery_deadline": "2026-05-30"
+  },
+  "buyer_guardrails": {
+    "buyer_max_acceptable_unit_price": 110.0,
+    "buyer_min_acceptable_quantity": 100,
+    "buyer_latest_acceptable_deadline": "2026-05-25"
+  },
+  "seller_guardrails": {
+    "seller_min_acceptable_unit_price": 95.0,
+    "seller_min_acceptable_quantity": 100,
+    "seller_earliest_acceptable_deadline": "2026-05-18"
   }
 }

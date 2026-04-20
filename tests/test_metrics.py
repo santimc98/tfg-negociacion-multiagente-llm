@@ -43,6 +43,12 @@ class MetricsTest(unittest.TestCase):
             metrics.joint_utility,
             round(metrics.buyer_utility + metrics.seller_utility, 4),
         )
+        self.assertTrue(metrics.private_feasibility_buyer)
+        self.assertTrue(metrics.private_feasibility_seller)
+        self.assertEqual(
+            metrics.agreement_balance_gap,
+            round(abs(metrics.buyer_utility - metrics.seller_utility), 4),
+        )
 
     def test_metrics_without_agreement_are_zero_for_utilities(self) -> None:
         scenario = create_basic_scenario()
@@ -62,6 +68,9 @@ class MetricsTest(unittest.TestCase):
         self.assertEqual(metrics.buyer_utility, 0.0)
         self.assertEqual(metrics.seller_utility, 0.0)
         self.assertEqual(metrics.joint_utility, 0.0)
+        self.assertFalse(metrics.private_feasibility_buyer)
+        self.assertFalse(metrics.private_feasibility_seller)
+        self.assertEqual(metrics.agreement_balance_gap, 0.0)
 
 
 if __name__ == "__main__":

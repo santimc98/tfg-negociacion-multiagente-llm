@@ -49,6 +49,24 @@ class AgentPreferences:
 
 
 @dataclass(frozen=True)
+class BuyerGuardrails:
+    """Private acceptance limits for the buyer."""
+
+    buyer_max_acceptable_unit_price: float
+    buyer_min_acceptable_quantity: int
+    buyer_latest_acceptable_deadline: date
+
+
+@dataclass(frozen=True)
+class SellerGuardrails:
+    """Private acceptance limits for the seller."""
+
+    seller_min_acceptable_unit_price: float
+    seller_min_acceptable_quantity: int
+    seller_earliest_acceptable_deadline: date
+
+
+@dataclass(frozen=True)
 class Scenario:
     """Controlled supply-chain scenario with public and private data."""
 
@@ -57,6 +75,8 @@ class Scenario:
     constraints: PublicScenarioConstraints
     buyer_preferences: AgentPreferences
     seller_preferences: AgentPreferences
+    buyer_guardrails: BuyerGuardrails
+    seller_guardrails: SellerGuardrails
 
 
 @dataclass(frozen=True)

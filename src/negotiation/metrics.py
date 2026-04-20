@@ -6,7 +6,11 @@ from dataclasses import dataclass
 from datetime import date
 
 from negotiation.models import Agreement, NegotiationResult, Scenario
-from negotiation.validator import validate_agreement
+from negotiation.validator import (
+    validate_agreement,
+    validate_terms_for_buyer_acceptance,
+    validate_terms_for_seller_acceptance,
+)
 
 
 @dataclass(frozen=True)
@@ -19,6 +23,9 @@ class NegotiationMetrics:
     buyer_utility: float
     seller_utility: float
     joint_utility: float
+    private_feasibility_buyer: bool
+    private_feasibility_seller: bool
+    agreement_balance_gap: float
 
 
 def calculate_metrics(result: NegotiationResult) -> NegotiationMetrics:
@@ -26,6 +33,14 @@ def calculate_metrics(result: NegotiationResult) -> NegotiationMetrics:
 
     agreement = result.agreement
     valid_agreement = agreement is not None and validate_agreement(agreement, result.scenario).is_valid
+    private_feasibility_buyer = (
+        agreement is not None
+        and validate_terms_for_buyer_acceptance(agreement.terms, result.scenario).is_valid
+    )
+    private_feasibility_seller = (
+        agreement is not None
+        and validate_terms_for_seller_acceptance(agreement.terms, result.scenario).is_valid
+    )
     buyer_utility = _buyer_utility(agreement, result.scenario) if valid_agreement else 0.0
     seller_utility = _seller_utility(agreement, result.scenario) if valid_agreement else 0.0
 
@@ -36,6 +51,9 @@ def calculate_metrics(result: NegotiationResult) -> NegotiationMetrics:
         buyer_utility=buyer_utility,
         seller_utility=seller_utility,
         joint_utility=round(buyer_utility + seller_utility, 4),
+        private_feasibility_buyer=private_feasibility_buyer,
+        private_feasibility_seller=private_feasibility_seller,
+        agreement_balance_gap=round(abs(buyer_utility - seller_utility), 4),
     )
 
 

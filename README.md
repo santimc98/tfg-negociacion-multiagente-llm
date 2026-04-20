@@ -44,9 +44,14 @@ python src/main.py
 python -m unittest discover -s tests
 ```
 
-## Diseño inicial
+## Diseño actual
 
 El motor ejecuta una negociación por turnos entre `buyer` y `seller`, con un máximo de rondas. El escenario separa restricciones públicas de preferencias privadas de cada agente.
+
+Además de los targets de utilidad, cada agente tiene guardrails privados de aceptación:
+
+- comprador: precio máximo aceptable, cantidad mínima aceptable y fecha límite máxima aceptable;
+- vendedor: precio mínimo aceptable, cantidad mínima aceptable y fecha más temprana aceptable para entregar.
 
 La negociación se modela mediante acciones explícitas:
 
@@ -56,6 +61,10 @@ La negociación se modela mediante acciones explícitas:
 - `REJECT`
 - `WALK_AWAY`
 
-Cada propuesta o contraoferta válida recibe un identificador. Un acuerdo solo se crea cuando un agente acepta explícitamente la última propuesta válida de la contraparte; el acuerdo conserva exactamente los términos aceptados.
+Cada propuesta o contraoferta válida recibe un identificador. `PROPOSE` inicia una propuesta sin referencia previa; `COUNTER`, `ACCEPT` y `REJECT` deben referenciar una propuesta válida de la contraparte. `WALK_AWAY` representa una salida terminal genérica.
+
+Un acuerdo solo se crea cuando un agente acepta explícitamente la última propuesta válida de la contraparte y esos términos respetan también sus guardrails privados. El acuerdo conserva exactamente los términos aceptados.
+
+Las métricas incluyen utilidad de comprador y vendedor, utilidad conjunta, viabilidad privada por agente y diferencia absoluta entre utilidades (`agreement_balance_gap`).
 
 La implementación usa un `MockNegotiationProvider` para simular acciones. Más adelante puede sustituirse por un proveedor conectado a un LLM local open-source manteniendo la misma interfaz.

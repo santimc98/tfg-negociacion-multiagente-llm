@@ -15,7 +15,12 @@ from negotiation.models import (
     Scenario,
     TurnLog,
 )
-from negotiation.validator import ValidationResult, validate_action, validate_agreement
+from negotiation.validator import (
+    ValidationResult,
+    validate_action,
+    validate_agreement,
+    validate_terms_for_acceptance,
+)
 
 
 class ActionProvider(Protocol):
@@ -64,7 +69,15 @@ class NegotiationEngine:
         for round_number in range(1, self.max_rounds + 1):
             for role, provider in (("buyer", buyer_provider), ("seller", seller_provider)):
                 action = provider.generate_action(role, scenario, round_number, tuple(turn_log))
-                validation = validate_action(action, scenario, valid_offer_ids=proposals.keys())
+                proposal_owner_by_id = {
+                    proposal_id: proposal.proposer for proposal_id, proposal in proposals.items()
+                }
+                validation = validate_action(
+                    action,
+                    scenario,
+                    valid_offer_ids=proposals.keys(),
+                    proposal_owner_by_id=proposal_owner_by_id,
+                )
 
                 if validation.is_valid and action.action_type in {
                     NegotiationActionType.PROPOSE,
@@ -126,6 +139,28 @@ class NegotiationEngine:
 
                 if action.action_type == NegotiationActionType.ACCEPT:
                     proposal = proposals[action.target_offer_id]
+                    private_acceptance_validation = validate_terms_for_acceptance(
+                        role=role,
+                        terms=proposal.terms,
+                        scenario=scenario,
+                    )
+                    if not private_acceptance_validation.is_valid:
+                        turn_log.append(
+                            self._build_turn_log(
+                                round_number=round_number,
+                                role=role,
+                                action=action,
+                                validation=private_acceptance_validation,
+                                negotiation_state="invalid_provider_output",
+                            )
+                        )
+                        return self._result(
+                            scenario=scenario,
+                            agreement=None,
+                            turn_log=turn_log,
+                            stopped_reason="invalid_provider_output",
+                        )
+
                     agreement = Agreement(
                         terms=proposal.terms,
                         accepted_offer_id=proposal.proposal_id,
