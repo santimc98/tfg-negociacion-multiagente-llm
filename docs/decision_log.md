@@ -44,3 +44,14 @@
 - Se añadió `llm.factory.create_provider(...)` para seleccionar `mock` u `ollama` desde runners o demos sin acoplar el resto del sistema a una implementación concreta.
 - Se añadió `src/run_ollama_demo.py` como utilidad mínima de ejecución local. No se añade interfaz gráfica en esta fase.
 - Limitación actual: no hay reintentos ni reparación automática de respuestas LLM. Esta decisión favorece robustez y trazabilidad frente a sofisticación prematura.
+
+## 2026-04-29 - Robustecimiento práctico del proveedor Ollama
+
+- `gemma4:26b` pasa a ser el modelo principal de pruebas locales. En este entorno `qwen3.5:27b` mostró timeouts tempranos, así que no se toma por ahora como modelo principal de evaluación.
+- Se redujo el prompt del proveedor Ollama para disminuir latencia y ambigüedad. El prompt ahora incluye solo rangos públicos, contexto privado del rol, reglas operativas de acción e historial reciente resumido.
+- Se añadió `history_limit` a la configuración del proveedor. El valor por defecto es pequeño para reducir contexto enviado y estabilizar la generación.
+- El proveedor instruye explícitamente al modelo a responder `WALK_AWAY` si no puede proponer una acción limpia y a no incluir pensamiento interno, borradores ni texto fuera del JSON.
+- `rationale` se mantiene opcional y breve. El esquema JSON fija longitud máxima y el parser rechaza racionales excesivamente largas.
+- Se endureció el esquema de salida para reducir ambigüedad en `target_offer_id` y `rationale`, manteniendo el contrato mínimo de acción.
+- Se añadieron metadatos de trazabilidad por turno y en la exportación: tipo de proveedor, modelo y latencia aproximada de llamada. Esta información sirve para comparar baseline mock frente a Ollama en análisis experimental.
+- El motor y el validador siguen siendo la autoridad final. Ninguna decisión de validez, guardrails o protocolo se movió al proveedor LLM.

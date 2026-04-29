@@ -7,6 +7,7 @@ from negotiation.models import (
     NegotiationAction,
     NegotiationActionType,
     OfferTerms,
+    ProviderDescriptor,
     Scenario,
     TurnLog,
 )
@@ -14,6 +15,11 @@ from negotiation.models import (
 
 class MockNegotiationProvider:
     """Deterministic provider used while LLM integration is not available."""
+
+    def describe_provider(self) -> ProviderDescriptor:
+        """Return static provider metadata for traceability."""
+
+        return ProviderDescriptor(provider_kind="mock", model_name=None)
 
     def generate_action(
         self,

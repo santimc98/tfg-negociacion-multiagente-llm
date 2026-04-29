@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass, replace
 from typing import Protocol
 
@@ -13,6 +14,7 @@ from negotiation.models import (
     NegotiationResult,
     NegotiationState,
     OfferTerms,
+    ProviderDescriptor,
     Scenario,
     TurnLog,
 )
@@ -71,10 +73,17 @@ class NegotiationEngine:
         active_offer_id: str | None = None
         last_state_change_reason = "initialized"
         proposal_sequence = 0
+        provider_summary = {
+            "buyer": self._describe_provider(buyer_provider),
+            "seller": self._describe_provider(seller_provider),
+        }
 
         for round_number in range(1, self.max_rounds + 1):
             for role, provider in (("buyer", buyer_provider), ("seller", seller_provider)):
+                started_at = time.perf_counter()
                 action = provider.generate_action(role, scenario, round_number, tuple(turn_log))
+                provider_latency_ms = round((time.perf_counter() - started_at) * 1000, 3)
+                provider_descriptor = provider_summary[role]
                 proposal_owner_by_id = {
                     proposal_id: proposal.proposer for proposal_id, proposal in proposals.items()
                 }
@@ -130,6 +139,8 @@ class NegotiationEngine:
                             accepted_offer_ids=accepted_offer_ids,
                             active_offer_id=active_offer_id,
                             last_state_change_reason="invalid provider output",
+                            provider_descriptor=provider_descriptor,
+                            provider_latency_ms=provider_latency_ms,
                         )
                     )
                     return self._result(
@@ -137,6 +148,7 @@ class NegotiationEngine:
                         agreement=None,
                         turn_log=turn_log,
                         stopped_reason="invalid_provider_output",
+                        provider_summary=provider_summary,
                     )
 
                 if action.action_type == NegotiationActionType.WALK_AWAY:
@@ -154,6 +166,8 @@ class NegotiationEngine:
                             accepted_offer_ids=accepted_offer_ids,
                             active_offer_id=active_offer_id,
                             last_state_change_reason="walk-away action received",
+                            provider_descriptor=provider_descriptor,
+                            provider_latency_ms=provider_latency_ms,
                         )
                     )
                     return self._result(
@@ -161,6 +175,7 @@ class NegotiationEngine:
                         agreement=None,
                         turn_log=turn_log,
                         stopped_reason="walk_away",
+                        provider_summary=provider_summary,
                     )
 
                 if action.action_type == NegotiationActionType.REJECT:
@@ -184,6 +199,8 @@ class NegotiationEngine:
                             accepted_offer_ids=accepted_offer_ids,
                             active_offer_id=active_offer_id,
                             last_state_change_reason=last_state_change_reason,
+                            provider_descriptor=provider_descriptor,
+                            provider_latency_ms=provider_latency_ms,
                         )
                     )
                     continue
@@ -211,6 +228,8 @@ class NegotiationEngine:
                                 accepted_offer_ids=accepted_offer_ids,
                                 active_offer_id=active_offer_id,
                                 last_state_change_reason="private acceptance guardrail violation",
+                                provider_descriptor=provider_descriptor,
+                                provider_latency_ms=provider_latency_ms,
                             )
                         )
                         return self._result(
@@ -218,6 +237,7 @@ class NegotiationEngine:
                             agreement=None,
                             turn_log=turn_log,
                             stopped_reason="invalid_provider_output",
+                            provider_summary=provider_summary,
                         )
 
                     agreement = Agreement(
@@ -243,6 +263,8 @@ class NegotiationEngine:
                                 accepted_offer_ids=accepted_offer_ids,
                                 active_offer_id=active_offer_id,
                                 last_state_change_reason="invalid agreement",
+                                provider_descriptor=provider_descriptor,
+                                provider_latency_ms=provider_latency_ms,
                             )
                         )
                         return self._result(
@@ -250,6 +272,7 @@ class NegotiationEngine:
                             agreement=None,
                             turn_log=turn_log,
                             stopped_reason="invalid_provider_output",
+                            provider_summary=provider_summary,
                         )
 
                     accepted_offer_ids.add(proposal.proposal_id)
@@ -268,6 +291,8 @@ class NegotiationEngine:
                             accepted_offer_ids=accepted_offer_ids,
                             active_offer_id=None,
                             last_state_change_reason=f"{role} accepted {proposal.proposal_id}",
+                            provider_descriptor=provider_descriptor,
+                            provider_latency_ms=provider_latency_ms,
                         )
                     )
                     return self._result(
@@ -275,6 +300,7 @@ class NegotiationEngine:
                         agreement=agreement,
                         turn_log=turn_log,
                         stopped_reason="agreement_reached",
+                        provider_summary=provider_summary,
                     )
 
                 turn_log.append(
@@ -291,6 +317,8 @@ class NegotiationEngine:
                         accepted_offer_ids=accepted_offer_ids,
                         active_offer_id=active_offer_id,
                         last_state_change_reason=last_state_change_reason,
+                        provider_descriptor=provider_descriptor,
+                        provider_latency_ms=provider_latency_ms,
                     )
                 )
 
@@ -299,6 +327,7 @@ class NegotiationEngine:
             agreement=None,
             turn_log=turn_log,
             stopped_reason="max_rounds_reached",
+            provider_summary=provider_summary,
         )
 
     def _validate_accept_context(
@@ -343,6 +372,8 @@ class NegotiationEngine:
         accepted_offer_ids: set[str],
         active_offer_id: str | None,
         last_state_change_reason: str,
+        provider_descriptor: ProviderDescriptor,
+        provider_latency_ms: float,
     ) -> TurnLog:
         target_offer_id_resolved = (
             None if action.target_offer_id is None else action.target_offer_id in proposals
@@ -364,6 +395,9 @@ class NegotiationEngine:
                 active_offer_id=active_offer_id,
                 last_state_change_reason=last_state_change_reason,
             ),
+            provider_kind=provider_descriptor.provider_kind,
+            provider_model_name=provider_descriptor.model_name,
+            provider_latency_ms=provider_latency_ms,
         )
 
     def _state_snapshot(
@@ -413,6 +447,7 @@ class NegotiationEngine:
         agreement: Agreement | None,
         turn_log: list[TurnLog],
         stopped_reason: str,
+        provider_summary: dict[AgentRole, ProviderDescriptor],
     ) -> NegotiationResult:
         return NegotiationResult(
             scenario=scenario,
@@ -420,4 +455,11 @@ class NegotiationEngine:
             agreement=agreement,
             turn_log=tuple(turn_log),
             stopped_reason=stopped_reason,
+            provider_summary=provider_summary,
         )
+
+    def _describe_provider(self, provider: ActionProvider) -> ProviderDescriptor:
+        descriptor = getattr(provider, "describe_provider", None)
+        if callable(descriptor):
+            return descriptor()
+        return ProviderDescriptor(provider_kind=provider.__class__.__name__, model_name=None)

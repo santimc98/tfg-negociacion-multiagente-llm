@@ -47,6 +47,20 @@ class ActionParserTest(unittest.TestCase):
         self.assertEqual(action.target_offer_id, "O2")
         self.assertIsNone(action.offer_terms)
 
+    def test_parse_valid_json_with_null_rationale(self) -> None:
+        action = parse_llm_action_response(
+            {
+                "action_type": "WALK_AWAY",
+                "target_offer_id": None,
+                "offer_terms": None,
+                "rationale": None,
+            },
+            role="seller",
+        )
+
+        self.assertEqual(action.action_type, NegotiationActionType.WALK_AWAY)
+        self.assertIsNone(action.rationale)
+
     def test_malformed_json_raises_controlled_error(self) -> None:
         with self.assertRaises(LLMActionParseError):
             parse_llm_action_response("{not-json", role="buyer")
@@ -61,6 +75,22 @@ class ActionParserTest(unittest.TestCase):
                         "quantity": 120,
                         "delivery_deadline": "2026-05-20",
                     },
+                },
+                role="buyer",
+            )
+
+    def test_long_rationale_raises_controlled_error(self) -> None:
+        with self.assertRaises(LLMActionParseError):
+            parse_llm_action_response(
+                {
+                    "action_type": "PROPOSE",
+                    "target_offer_id": None,
+                    "offer_terms": {
+                        "unit_price": 100,
+                        "quantity": 120,
+                        "delivery_deadline": "2026-05-20",
+                    },
+                    "rationale": "x" * 200,
                 },
                 role="buyer",
             )

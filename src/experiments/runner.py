@@ -17,10 +17,11 @@ def run_reproducible_experiment(
     max_rounds: int = 5,
     include_individual_results: bool = True,
     provider_kind: ProviderKind = "mock",
-    model_name: str = "gemma3:27b",
+    model_name: str = "gemma4:26b",
     base_url: str = "http://localhost:11434",
-    temperature: float = 0.2,
+    temperature: float = 0.1,
     timeout_seconds: float = 60.0,
+    history_limit: int = 4,
 ) -> dict[str, Any]:
     """Generate scenarios, run a batch and return JSON-compatible results."""
 
@@ -34,6 +35,7 @@ def run_reproducible_experiment(
             base_url=base_url,
             temperature=temperature,
             timeout_seconds=timeout_seconds,
+            history_limit=history_limit,
         ),
         seller_provider_factory=lambda: create_provider(
             provider_kind=provider_kind,
@@ -41,6 +43,7 @@ def run_reproducible_experiment(
             base_url=base_url,
             temperature=temperature,
             timeout_seconds=timeout_seconds,
+            history_limit=history_limit,
         ),
     )
     batch_payload = batch_result_to_dict(batch_result)
@@ -52,6 +55,7 @@ def run_reproducible_experiment(
             "max_rounds": max_rounds,
             "provider_kind": provider_kind,
             "model_name": model_name if provider_kind == "ollama" else None,
+            "history_limit": history_limit if provider_kind == "ollama" else None,
         },
         "scenarios": [scenario_to_dict(scenario) for scenario in scenarios],
         "summary": batch_payload["summary"],
@@ -77,10 +81,11 @@ def write_experiment_outputs(
     seed: int = 42,
     max_rounds: int = 5,
     provider_kind: ProviderKind = "mock",
-    model_name: str = "gemma3:27b",
+    model_name: str = "gemma4:26b",
     base_url: str = "http://localhost:11434",
-    temperature: float = 0.2,
+    temperature: float = 0.1,
     timeout_seconds: float = 60.0,
+    history_limit: int = 4,
 ) -> dict[str, Path]:
     """Run an experiment and write summary plus individual outputs."""
 
@@ -95,6 +100,7 @@ def write_experiment_outputs(
             base_url=base_url,
             temperature=temperature,
             timeout_seconds=timeout_seconds,
+            history_limit=history_limit,
         ),
         seller_provider_factory=lambda: create_provider(
             provider_kind=provider_kind,
@@ -102,6 +108,7 @@ def write_experiment_outputs(
             base_url=base_url,
             temperature=temperature,
             timeout_seconds=timeout_seconds,
+            history_limit=history_limit,
         ),
     )
     full_payload = batch_result_to_dict(batch_result)
@@ -116,6 +123,7 @@ def write_experiment_outputs(
             "max_rounds": max_rounds,
             "provider_kind": provider_kind,
             "model_name": model_name if provider_kind == "ollama" else None,
+            "history_limit": history_limit if provider_kind == "ollama" else None,
         },
         "summary": full_payload["summary"],
     }

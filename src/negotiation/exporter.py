@@ -18,6 +18,7 @@ def negotiation_result_to_dict(result: NegotiationResult) -> dict[str, Any]:
 
     return {
         "scenario": scenario_to_dict(result.scenario),
+        "providers": _to_jsonable(result.provider_summary),
         "turn_history": _to_jsonable(result.turn_log),
         "agreement": _to_jsonable(result.agreement),
         "metrics": _to_jsonable(calculate_metrics(result)),

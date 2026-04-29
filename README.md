@@ -105,10 +105,20 @@ El proveedor Ollama vive en `src/llm/ollama_provider.py`. Usa la API local `/api
 
 El LLM no valida el protocolo ni decide si una accion es aceptable. Solo propone una accion estructurada. El motor y `negotiation.validator` siguen siendo la autoridad: validan referencias, restricciones publicas, guardrails privados, propuestas rechazadas y cierre de acuerdos.
 
+El modelo principal de pruebas locales pasa a ser `gemma4:26b`. En este entorno `qwen3.5:27b` ha mostrado timeouts tempranos, por lo que no se toma por ahora como modelo principal de experimentacion.
+
+Para mejorar robustez y latencia, el proveedor Ollama:
+
+- usa prompts mas cortos y auditables;
+- envia solo historial reciente relevante;
+- expone `history_limit` en configuracion;
+- pide `rationale` nulo o una frase muy corta;
+- instruye al modelo a devolver `WALK_AWAY` si no puede emitir una accion limpia.
+
 Ejemplo de ejecucion con Ollama:
 
 ```bash
-python src/run_ollama_demo.py --model gemma3:27b --base-url http://localhost:11434
+python src/run_ollama_demo.py --model gemma4:26b --base-url http://localhost:11434
 ```
 
 Si tu modelo local usa otro nombre, cambialo con `--model`. La demo no requiere interfaz grafica.
@@ -120,4 +130,5 @@ Limitaciones actuales del proveedor local:
 - no reintenta automaticamente salidas malformadas;
 - no corrige acciones invalidas generadas por el modelo;
 - si Ollama falla o devuelve JSON invalido, el proveedor emite una accion invalida controlada y el motor termina con `invalid_provider_output`;
-- la calidad depende del modelo local, temperatura y prompt.
+- la calidad depende del modelo local, temperatura, `history_limit` y prompt;
+- la reduccion de prompt e historial mejora robustez practica, pero no garantiza ausencia total de acciones invalidas.

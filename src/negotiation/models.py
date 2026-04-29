@@ -112,6 +112,14 @@ class Agreement:
 
 
 @dataclass(frozen=True)
+class ProviderDescriptor:
+    """Minimal description of the provider used by one agent."""
+
+    provider_kind: str
+    model_name: str | None = None
+
+
+@dataclass(frozen=True)
 class NegotiationState:
     """Snapshot of the operational negotiation state."""
 
@@ -136,6 +144,9 @@ class TurnLog:
     target_offer_id_resolved: bool | None = None
     result_summary: str = ""
     state_after: NegotiationState | None = None
+    provider_kind: str | None = None
+    provider_model_name: str | None = None
+    provider_latency_ms: float | None = None
 
 
 @dataclass(frozen=True)
@@ -147,6 +158,7 @@ class NegotiationResult:
     agreement: Agreement | None
     turn_log: tuple[TurnLog, ...]
     stopped_reason: StoppedReason
+    provider_summary: dict[AgentRole, ProviderDescriptor] = field(default_factory=dict)
 
     @property
     def agreement_reached(self) -> bool:

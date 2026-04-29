@@ -13,6 +13,9 @@ class LLMActionParseError(ValueError):
     """Raised when an LLM response cannot be converted into an action."""
 
 
+MAX_RATIONALE_LENGTH = 160
+
+
 def parse_llm_action_response(response: str | dict[str, Any], role: AgentRole) -> NegotiationAction:
     """Parse a JSON LLM response into a NegotiationAction."""
 
@@ -101,6 +104,9 @@ def _parse_optional_string(raw_value: Any, field_name: str) -> str | None:
         return None
     if not isinstance(raw_value, str):
         raise LLMActionParseError(f"{field_name} must be a string or null")
-    if raw_value.strip() == "":
+    normalized = " ".join(raw_value.strip().split())
+    if normalized == "":
         return None
-    return raw_value
+    if field_name == "rationale" and len(normalized) > MAX_RATIONALE_LENGTH:
+        raise LLMActionParseError("rationale must be brief")
+    return normalized
