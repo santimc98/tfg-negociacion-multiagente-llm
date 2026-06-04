@@ -22,6 +22,7 @@ src/
     generator.py
     batch.py
   experiments/
+    compare_providers.py
     runner.py
   llm/
     action_parser.py
@@ -30,6 +31,7 @@ src/
     provider.py
   main.py
   run_ollama_demo.py
+  run_provider_comparison.py
 tests/
   test_validator.py
   test_engine.py
@@ -124,6 +126,23 @@ python src/run_ollama_demo.py --model gemma4:26b --base-url http://localhost:114
 Si tu modelo local usa otro nombre, cambialo con `--model`. La demo no requiere interfaz grafica.
 
 Los experimentos reproducibles tambien pueden usar Ollama mediante `experiments.runner.run_reproducible_experiment(provider_kind="ollama", ...)`. Para comparaciones academicas, `provider_kind="mock"` se mantiene como baseline.
+
+## Comparacion experimental
+
+El modulo `experiments.compare_providers` ejecuta el baseline mock y Ollama sobre exactamente los mismos escenarios simulados, usando la misma semilla, numero de escenarios y limite de rondas.
+
+```bash
+python src/run_provider_comparison.py --seed 42 --scenario-count 10 --max-rounds 5 --model gemma4:26b
+```
+
+La salida de consola muestra una tabla compacta. Tambien se generan:
+
+- `experiment_outputs/comparison/comparison_summary.json`
+- `experiment_outputs/comparison/comparison_runs.json`
+
+El resumen comparativo incluye tasa de acuerdos, viabilidad publica y privada, salidas invalidas, abandonos, finalizaciones por limite de rondas, utilidades, equilibrio y latencia media del proveedor.
+
+Estas metricas permiten valorar si un LLM negocia bien dentro del entorno controlado: debe producir pocas salidas invalidas, alcanzar acuerdos viables, evitar rondas innecesarias y mantener utilidades razonablemente equilibradas. La comparacion no pretende identificar un modelo universalmente mejor, sino medir la utilidad real de cada proveedor bajo las mismas condiciones experimentales.
 
 Limitaciones actuales del proveedor local:
 

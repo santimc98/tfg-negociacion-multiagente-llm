@@ -55,3 +55,14 @@
 - Se endureció el esquema de salida para reducir ambigüedad en `target_offer_id` y `rationale`, manteniendo el contrato mínimo de acción.
 - Se añadieron metadatos de trazabilidad por turno y en la exportación: tipo de proveedor, modelo y latencia aproximada de llamada. Esta información sirve para comparar baseline mock frente a Ollama en análisis experimental.
 - El motor y el validador siguen siendo la autoridad final. Ninguna decisión de validez, guardrails o protocolo se movió al proveedor LLM.
+
+## 2026-06-04 - Evaluación comparativa para la tercera entrega
+
+- Se añadió `experiments.compare_providers` para ejecutar distintos proveedores sobre el mismo conjunto materializado de escenarios. Esto garantiza que mock y Ollama reciben exactamente los mismos casos, no solo escenarios generados con parámetros similares.
+- La configuración compartida registra semilla, número de escenarios y máximo de rondas. Cada proveedor registra además tipo, modelo, temperatura, límite de historial y timeout.
+- La comparación añade métricas orientadas al comportamiento del proveedor: `invalid_output_rate`, `walk_away_rate`, `max_rounds_rate` y latencia media, además de acuerdos, viabilidad, rondas, utilidades y equilibrio.
+- La tasa de salidas inválidas mide ejecuciones terminadas con `invalid_provider_output`; no intenta reinterpretar ni reparar las acciones del LLM.
+- La latencia media se calcula desde las llamadas registradas por turno. Se presenta como indicador operativo complementario, no como medida de calidad negociadora.
+- Se exportan dos archivos: un resumen comparativo ligero y resultados individuales completos para auditoría posterior.
+- La salida de consola usa una tabla simple para facilitar la incorporación de resultados preliminares en la memoria del TFG.
+- El objetivo de la comparación no es encontrar el mejor modelo universal. Se busca evaluar la utilidad real del sistema bajo un entorno controlado, reproducible y común a todos los proveedores.
