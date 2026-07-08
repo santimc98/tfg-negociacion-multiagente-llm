@@ -1,0 +1,17 @@
+%% Ciclo de vida y motivos de cierre de una negociacion
+stateDiagram-v2
+    [*] --> EnCurso: run()
+    EnCurso --> EnCurso: PROPOSE / COUNTER / REJECT validos
+    EnCurso --> Mediacion: ronda >= inicio de mediacion
+    Mediacion --> EnCurso: compromiso tabulado
+    EnCurso --> Acuerdo: ACCEPT valido + guardrails OK
+    Mediacion --> Impasse: sin zona de acuerdo
+    EnCurso --> Abandono: WALK_AWAY
+    EnCurso --> Invalida: accion invalida del proveedor
+    EnCurso --> LimiteRondas: se agotan las rondas
+
+    Acuerdo --> [*]: agreement_reached
+    Abandono --> [*]: walk_away
+    Invalida --> [*]: invalid_provider_output
+    LimiteRondas --> [*]: max_rounds_reached
+    Impasse --> [*]: mediator_impasse

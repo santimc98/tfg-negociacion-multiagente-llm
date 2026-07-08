@@ -1,6 +1,24 @@
-# Prototipo de negociación automática
+# Prototipo de negociación automática entre agentes LLM
 
-Esqueleto inicial en Python para un TFG sobre negociación automática entre dos agentes en un entorno controlado de cadena de suministro.
+Prototipo en Python para un TFG sobre negociación automática entre dos agentes (comprador y vendedor) en un entorno controlado de cadena de suministro. Un motor determinista y un validador son la autoridad sobre la validez; los proveedores de acciones (baseline determinista, LLM local vía Ollama o LLM en la nube vía OpenRouter) solo proponen acciones candidatas. Incluye un agente juez/mediador y una interfaz web para observar la negociación en vivo.
+
+## Puesta en marcha rápida
+
+```bash
+# Tests
+python -m pytest -q
+
+# Demo con LLM en la nube (requiere .env con OPENROUTER_API_KEY)
+python src/run_openrouter_demo.py --buyer-model z-ai/glm-5.2 --seller-model z-ai/glm-5.2
+
+# Interfaz web (http://127.0.0.1:8000)
+python src/run_web.py
+
+# Comparación experimental completa (mock + LLMs, con y sin mediador)
+python src/run_full_experiment.py --scenario-count 5 --seed 42 --reasoning off
+```
+
+La clave de OpenRouter se lee de un archivo `.env` en la raíz (`OPENROUTER_API_KEY=...`), que no se versiona.
 
 El prototipo se centra en tres variables:
 

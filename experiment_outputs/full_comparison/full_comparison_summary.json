@@ -1,0 +1,209 @@
+{
+  "config": {
+    "models": [
+      "deepseek/deepseek-v4-pro",
+      "moonshotai/kimi-k2.6",
+      "z-ai/glm-5.2"
+    ],
+    "seed": 42,
+    "scenario_count": 5,
+    "max_rounds": 6,
+    "mediation_start_round": 3,
+    "temperature": 0.2,
+    "reasoning": "off"
+  },
+  "results": [
+    {
+      "arm": {
+        "label": "mock",
+        "provider_kind": "mock",
+        "model_name": null,
+        "use_mediator": false
+      },
+      "summary": {
+        "provider_kind": "mock",
+        "model_name": null,
+        "total_runs": 5,
+        "agreement_rate": 1.0,
+        "feasible_agreement_rate": 1.0,
+        "invalid_output_rate": 0.0,
+        "walk_away_rate": 0.0,
+        "max_rounds_rate": 0.0,
+        "average_rounds": 2.0,
+        "average_buyer_utility": 0.5724,
+        "average_seller_utility": 0.7096,
+        "average_balance_gap": 0.1372,
+        "average_provider_latency_ms": 0.003,
+        "mediated_agreement_rate": 0.0
+      }
+    },
+    {
+      "arm": {
+        "label": "mock + mediador",
+        "provider_kind": "mock",
+        "model_name": null,
+        "use_mediator": true
+      },
+      "summary": {
+        "provider_kind": "mock",
+        "model_name": null,
+        "total_runs": 5,
+        "agreement_rate": 1.0,
+        "feasible_agreement_rate": 1.0,
+        "invalid_output_rate": 0.0,
+        "walk_away_rate": 0.0,
+        "max_rounds_rate": 0.0,
+        "average_rounds": 2.0,
+        "average_buyer_utility": 0.5724,
+        "average_seller_utility": 0.7096,
+        "average_balance_gap": 0.1372,
+        "average_provider_latency_ms": 0.002,
+        "mediated_agreement_rate": 0.0
+      }
+    },
+    {
+      "arm": {
+        "label": "deepseek/deepseek-v4-pro",
+        "provider_kind": "openrouter",
+        "model_name": "deepseek/deepseek-v4-pro",
+        "use_mediator": false
+      },
+      "summary": {
+        "provider_kind": "openrouter",
+        "model_name": "deepseek/deepseek-v4-pro",
+        "total_runs": 5,
+        "agreement_rate": 0.4,
+        "feasible_agreement_rate": 0.4,
+        "invalid_output_rate": 0.0,
+        "walk_away_rate": 0.4,
+        "max_rounds_rate": 0.2,
+        "average_rounds": 4.6,
+        "average_buyer_utility": 0.3021,
+        "average_seller_utility": 0.2168,
+        "average_balance_gap": 0.0853,
+        "average_provider_latency_ms": 2974.063,
+        "mediated_agreement_rate": 0.0
+      }
+    },
+    {
+      "arm": {
+        "label": "deepseek/deepseek-v4-pro + mediador",
+        "provider_kind": "openrouter",
+        "model_name": "deepseek/deepseek-v4-pro",
+        "use_mediator": true
+      },
+      "summary": {
+        "provider_kind": "openrouter",
+        "model_name": "deepseek/deepseek-v4-pro",
+        "total_runs": 5,
+        "agreement_rate": 0.6,
+        "feasible_agreement_rate": 0.6,
+        "invalid_output_rate": 0.0,
+        "walk_away_rate": 0.0,
+        "max_rounds_rate": 0.4,
+        "average_rounds": 4.4,
+        "average_buyer_utility": 0.4405,
+        "average_seller_utility": 0.3281,
+        "average_balance_gap": 0.1124,
+        "average_provider_latency_ms": 3610.521,
+        "mediated_agreement_rate": 0.2
+      }
+    },
+    {
+      "arm": {
+        "label": "moonshotai/kimi-k2.6",
+        "provider_kind": "openrouter",
+        "model_name": "moonshotai/kimi-k2.6",
+        "use_mediator": false
+      },
+      "summary": {
+        "provider_kind": "openrouter",
+        "model_name": "moonshotai/kimi-k2.6",
+        "total_runs": 5,
+        "agreement_rate": 0.8,
+        "feasible_agreement_rate": 0.8,
+        "invalid_output_rate": 0.2,
+        "walk_away_rate": 0.0,
+        "max_rounds_rate": 0.0,
+        "average_rounds": 2.6,
+        "average_buyer_utility": 0.5266,
+        "average_seller_utility": 0.4988,
+        "average_balance_gap": 0.0549,
+        "average_provider_latency_ms": 13933.213,
+        "mediated_agreement_rate": 0.0
+      }
+    },
+    {
+      "arm": {
+        "label": "moonshotai/kimi-k2.6 + mediador",
+        "provider_kind": "openrouter",
+        "model_name": "moonshotai/kimi-k2.6",
+        "use_mediator": true
+      },
+      "summary": {
+        "provider_kind": "openrouter",
+        "model_name": "moonshotai/kimi-k2.6",
+        "total_runs": 5,
+        "agreement_rate": 1.0,
+        "feasible_agreement_rate": 1.0,
+        "invalid_output_rate": 0.0,
+        "walk_away_rate": 0.0,
+        "max_rounds_rate": 0.0,
+        "average_rounds": 2.6,
+        "average_buyer_utility": 0.6721,
+        "average_seller_utility": 0.6099,
+        "average_balance_gap": 0.1156,
+        "average_provider_latency_ms": 8783.488,
+        "mediated_agreement_rate": 0.6
+      }
+    },
+    {
+      "arm": {
+        "label": "z-ai/glm-5.2",
+        "provider_kind": "openrouter",
+        "model_name": "z-ai/glm-5.2",
+        "use_mediator": false
+      },
+      "summary": {
+        "provider_kind": "openrouter",
+        "model_name": "z-ai/glm-5.2",
+        "total_runs": 5,
+        "agreement_rate": 1.0,
+        "feasible_agreement_rate": 1.0,
+        "invalid_output_rate": 0.0,
+        "walk_away_rate": 0.0,
+        "max_rounds_rate": 0.0,
+        "average_rounds": 4.0,
+        "average_buyer_utility": 0.6692,
+        "average_seller_utility": 0.6128,
+        "average_balance_gap": 0.1007,
+        "average_provider_latency_ms": 3279.477,
+        "mediated_agreement_rate": 0.0
+      }
+    },
+    {
+      "arm": {
+        "label": "z-ai/glm-5.2 + mediador",
+        "provider_kind": "openrouter",
+        "model_name": "z-ai/glm-5.2",
+        "use_mediator": true
+      },
+      "summary": {
+        "provider_kind": "openrouter",
+        "model_name": "z-ai/glm-5.2",
+        "total_runs": 5,
+        "agreement_rate": 0.8,
+        "feasible_agreement_rate": 0.8,
+        "invalid_output_rate": 0.0,
+        "walk_away_rate": 0.0,
+        "max_rounds_rate": 0.2,
+        "average_rounds": 3.8,
+        "average_buyer_utility": 0.5612,
+        "average_seller_utility": 0.4642,
+        "average_balance_gap": 0.097,
+        "average_provider_latency_ms": 2409.351,
+        "mediated_agreement_rate": 0.4
+      }
+    }
+  ]
+}

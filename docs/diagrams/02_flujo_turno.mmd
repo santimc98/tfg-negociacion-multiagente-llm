@@ -1,0 +1,39 @@
+%% Flujo de informacion en un turno de negociacion
+sequenceDiagram
+    autonumber
+    participant UI as Interfaz / Runner
+    participant ENG as Motor (engine)
+    participant MED as Mediador
+    participant LLM as Proveedor LLM (agente)
+    participant VAL as Validador
+    participant ST as Estado de negociacion
+
+    UI->>ENG: run(escenario, proveedores, mediador)
+    loop Por cada ronda y rol (comprador, vendedor)
+        opt Ronda >= inicio de mediacion
+            ENG->>MED: mediate(escenario, historial)
+            alt Existe zona de acuerdo
+                MED-->>ENG: compromiso (terminos)
+                ENG->>ST: registra propuesta mediada
+                ENG-->>UI: turno MEDIATE (streaming)
+            else Sin zona de acuerdo
+                MED-->>ENG: impasse
+                ENG-->>UI: fin (mediator_impasse)
+            end
+        end
+        ENG->>LLM: generate_action(rol, escenario, ronda, historial)
+        LLM-->>ENG: accion candidata (JSON: tipo, oferta, rationale)
+        ENG->>VAL: validate_action(restricciones publicas, referencias)
+        alt Accion invalida
+            VAL-->>ENG: errores
+            ENG-->>UI: fin (invalid_provider_output)
+        else Accion valida
+            opt Accion = ACCEPT
+                ENG->>VAL: validate_terms_for_acceptance(guardrails privados)
+                VAL-->>ENG: viable / no viable
+            end
+            ENG->>ST: actualiza propuestas, rechazos, acuerdo
+            ENG-->>UI: turno (streaming en vivo)
+        end
+    end
+    ENG-->>UI: resultado + metricas

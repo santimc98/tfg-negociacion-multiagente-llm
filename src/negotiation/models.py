@@ -9,11 +9,15 @@ from typing import Any, Literal
 
 
 AgentRole = Literal["buyer", "seller"]
+# Roles that can appear in the turn log. The mediator is a neutral third
+# participant; only buyer and seller are negotiating agents with guardrails.
+ParticipantRole = Literal["buyer", "seller", "mediator"]
 StoppedReason = Literal[
     "agreement_reached",
     "max_rounds_reached",
     "walk_away",
     "invalid_provider_output",
+    "mediator_impasse",
 ]
 
 
@@ -25,6 +29,8 @@ class NegotiationActionType(str, Enum):
     ACCEPT = "ACCEPT"
     REJECT = "REJECT"
     WALK_AWAY = "WALK_AWAY"
+    # Tabled by the mediator on behalf of one party; the counterparty may ACCEPT.
+    MEDIATE = "MEDIATE"
 
 
 @dataclass(frozen=True)
@@ -90,9 +96,9 @@ class OfferTerms:
 
 @dataclass(frozen=True)
 class NegotiationAction:
-    """Protocol action produced by a negotiation agent."""
+    """Protocol action produced by a negotiation agent or the mediator."""
 
-    agent_role: AgentRole
+    agent_role: ParticipantRole
     action_type: NegotiationActionType
     offer_terms: OfferTerms | None = None
     target_offer_id: str | None = None
@@ -109,6 +115,8 @@ class Agreement:
     proposed_by: AgentRole
     accepted_by: AgentRole
     reached_at_round: int
+    # True when the accepted proposal was tabled by the mediator.
+    mediated: bool = False
 
 
 @dataclass(frozen=True)
@@ -136,7 +144,7 @@ class TurnLog:
     """Structured record of one agent turn."""
 
     round_number: int
-    agent_role: AgentRole
+    agent_role: ParticipantRole
     action: NegotiationAction
     is_valid: bool
     errors: tuple[str, ...] = field(default_factory=tuple)
@@ -159,6 +167,7 @@ class NegotiationResult:
     turn_log: tuple[TurnLog, ...]
     stopped_reason: StoppedReason
     provider_summary: dict[AgentRole, ProviderDescriptor] = field(default_factory=dict)
+    mediator_summary: ProviderDescriptor | None = None
 
     @property
     def agreement_reached(self) -> bool:

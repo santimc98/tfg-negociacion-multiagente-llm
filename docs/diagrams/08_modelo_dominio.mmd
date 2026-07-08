@@ -1,0 +1,73 @@
+%% Modelo de dominio del prototipo (estructuras principales)
+classDiagram
+    class Scenario {
+        +scenario_id
+        +constraints
+        +buyer_preferences
+        +seller_preferences
+        +buyer_guardrails
+        +seller_guardrails
+    }
+    class PublicScenarioConstraints {
+        +min/max_unit_price
+        +min/max_quantity
+        +earliest/latest_deadline
+    }
+    class AgentPreferences {
+        +target_unit_price
+        +target_quantity
+        +target_delivery_deadline
+    }
+    class BuyerGuardrails {
+        +max_acceptable_unit_price
+        +min_acceptable_quantity
+        +latest_acceptable_deadline
+    }
+    class SellerGuardrails {
+        +min_acceptable_unit_price
+        +min_acceptable_quantity
+        +earliest_acceptable_deadline
+    }
+    class OfferTerms {
+        +unit_price
+        +quantity
+        +delivery_deadline
+    }
+    class NegotiationAction {
+        +agent_role
+        +action_type
+        +offer_terms
+        +target_offer_id
+        +rationale
+    }
+    class Agreement {
+        +terms
+        +proposed_by
+        +accepted_by
+        +reached_at_round
+        +mediated
+    }
+    class TurnLog {
+        +round_number
+        +agent_role
+        +action
+        +is_valid
+        +state_after
+    }
+    class NegotiationResult {
+        +scenario
+        +agreement
+        +turn_log
+        +stopped_reason
+    }
+
+    Scenario --> PublicScenarioConstraints
+    Scenario --> AgentPreferences
+    Scenario --> BuyerGuardrails
+    Scenario --> SellerGuardrails
+    NegotiationAction --> OfferTerms
+    Agreement --> OfferTerms
+    TurnLog --> NegotiationAction
+    NegotiationResult --> Scenario
+    NegotiationResult --> Agreement
+    NegotiationResult --> TurnLog

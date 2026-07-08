@@ -9,11 +9,13 @@ from typing import Any, Callable, Iterable
 from llm.provider import MockNegotiationProvider
 from negotiation.engine import ActionProvider, NegotiationEngine
 from negotiation.exporter import negotiation_result_to_dict
+from negotiation.mediator import Mediator
 from negotiation.metrics import NegotiationMetrics, calculate_metrics
 from negotiation.models import NegotiationResult, Scenario
 
 
 ProviderFactory = Callable[[], ActionProvider]
+MediatorFactory = Callable[[], Mediator]
 
 
 @dataclass(frozen=True)
@@ -35,6 +37,7 @@ class BatchSummary:
     average_buyer_utility: float
     average_seller_utility: float
     average_balance_gap: float
+    mediated_agreement_rate: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -50,6 +53,8 @@ def run_batch_simulation(
     max_rounds: int = 5,
     buyer_provider_factory: ProviderFactory = MockNegotiationProvider,
     seller_provider_factory: ProviderFactory = MockNegotiationProvider,
+    mediator_factory: MediatorFactory | None = None,
+    mediation_start_round: int = 3,
 ) -> BatchSimulationResult:
     """Run one negotiation per scenario and return aggregate metrics."""
 
@@ -61,6 +66,8 @@ def run_batch_simulation(
             scenario=scenario,
             buyer_provider=buyer_provider_factory(),
             seller_provider=seller_provider_factory(),
+            mediator=mediator_factory() if mediator_factory is not None else None,
+            mediation_start_round=mediation_start_round,
         )
         runs.append(BatchRun(result=result, metrics=calculate_metrics(result)))
 
@@ -109,6 +116,7 @@ def _build_summary(runs: list[BatchRun]) -> BatchSummary:
             average_buyer_utility=0.0,
             average_seller_utility=0.0,
             average_balance_gap=0.0,
+            mediated_agreement_rate=0.0,
         )
 
     agreement_count = sum(1 for run in runs if run.metrics.agreement_reached)
@@ -119,6 +127,11 @@ def _build_summary(runs: list[BatchRun]) -> BatchSummary:
         and run.metrics.private_feasibility_buyer
         and run.metrics.private_feasibility_seller
     )
+    mediated_count = sum(
+        1
+        for run in runs
+        if run.result.agreement is not None and run.result.agreement.mediated
+    )
 
     return BatchSummary(
         total_runs=total_runs,
@@ -128,6 +141,7 @@ def _build_summary(runs: list[BatchRun]) -> BatchSummary:
         average_buyer_utility=round(_mean(run.metrics.buyer_utility for run in runs), 4),
         average_seller_utility=round(_mean(run.metrics.seller_utility for run in runs), 4),
         average_balance_gap=round(_mean(run.metrics.agreement_balance_gap for run in runs), 4),
+        mediated_agreement_rate=round(mediated_count / total_runs, 4),
     )
 
 

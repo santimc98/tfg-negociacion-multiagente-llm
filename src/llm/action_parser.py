@@ -20,8 +20,17 @@ def parse_llm_action_response(response: str | dict[str, Any], role: AgentRole) -
     """Parse a JSON LLM response into a NegotiationAction."""
 
     payload = _load_payload(response)
-    action_type = _parse_action_type(payload.get("action_type"))
-    offer_terms = _parse_offer_terms(payload.get("offer_terms"))
+    # Tolerate common field-name aliases some models emit despite explicit
+    # instructions (e.g. "action" instead of "action_type").
+    raw_action_type = payload.get("action_type")
+    if raw_action_type is None:
+        raw_action_type = payload.get("action")
+    raw_offer_terms = payload.get("offer_terms")
+    if raw_offer_terms is None and "terms" in payload:
+        raw_offer_terms = payload.get("terms")
+
+    action_type = _parse_action_type(raw_action_type)
+    offer_terms = _parse_offer_terms(raw_offer_terms)
     target_offer_id = _parse_optional_string(payload.get("target_offer_id"), "target_offer_id")
     rationale = _parse_optional_string(payload.get("rationale"), "rationale")
 

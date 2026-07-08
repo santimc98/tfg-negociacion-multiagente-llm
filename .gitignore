@@ -25,6 +25,16 @@ instrucciones.pdf
 plantilla_indiv.docx
 programacion.pdf
 TFE_primera_entrega_*.pdf
+TFE_tercera_entrega_*.pdf
 
 # Salidas temporales
 outputs/
+
+# Secretos / configuración local
+.env
+.claude/
+
+# Node / mermaid-cli (renderizado de diagramas)
+node_modules/
+package-lock.json
+package.json

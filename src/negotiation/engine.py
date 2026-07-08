@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass, replace
-from typing import Protocol
+from typing import Callable, Protocol
 
+from negotiation.mediator import Mediator
 from negotiation.models import (
     AgentRole,
     Agreement,
@@ -61,15 +62,36 @@ class NegotiationEngine:
         scenario: Scenario,
         buyer_provider: ActionProvider,
         seller_provider: ActionProvider,
+        mediator: Mediator | None = None,
+        mediation_start_round: int = 3,
+        on_turn: Callable[[TurnLog], None] | None = None,
     ) -> NegotiationResult:
-        """Execute negotiation turns until agreement, walk-away or round limit."""
+        """Execute negotiation turns until agreement, walk-away or round limit.
+
+        If a ``mediator`` is provided, from ``mediation_start_round`` onwards it
+        may table a compromise on behalf of one party (which the counterparty may
+        then ACCEPT) or declare an impasse when no settlement can satisfy both
+        private guardrails.
+
+        ``on_turn`` is an optional callback invoked with every turn as it is
+        recorded, which lets callers (such as the web UI) stream the negotiation
+        live without changing the engine's outcome.
+        """
 
         turn_log: list[TurnLog] = []
+
+        def record(turn: TurnLog) -> None:
+            turn_log.append(turn)
+            if on_turn is not None:
+                on_turn(turn)
+
         proposals: dict[str, StoredProposal] = {}
         latest_valid_proposal_by_agent: dict[AgentRole, str] = {}
         active_offer_ids: set[str] = set()
         rejected_offer_ids: set[str] = set()
         accepted_offer_ids: set[str] = set()
+        mediated_offer_ids: set[str] = set()
+        mediated_offer_by_owner: dict[AgentRole, str] = {}
         active_offer_id: str | None = None
         last_state_change_reason = "initialized"
         proposal_sequence = 0
@@ -77,9 +99,93 @@ class NegotiationEngine:
             "buyer": self._describe_provider(buyer_provider),
             "seller": self._describe_provider(seller_provider),
         }
+        mediator_summary = mediator.describe() if mediator is not None else None
 
         for round_number in range(1, self.max_rounds + 1):
             for role, provider in (("buyer", buyer_provider), ("seller", seller_provider)):
+                if mediator is not None and round_number >= mediation_start_round:
+                    counterparty: AgentRole = "seller" if role == "buyer" else "buyer"
+                    outcome = mediator.mediate(scenario, round_number, tuple(turn_log))
+                    if not outcome.feasible:
+                        record(
+                            self._build_turn_log(
+                                round_number=round_number,
+                                role="mediator",
+                                action=NegotiationAction(
+                                    agent_role="mediator",
+                                    action_type=NegotiationActionType.MEDIATE,
+                                    rationale=outcome.rationale,
+                                ),
+                                validation=ValidationResult(True, ()),
+                                negotiation_state="mediator_impasse",
+                                proposals=proposals,
+                                latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                                active_offer_ids=active_offer_ids,
+                                rejected_offer_ids=rejected_offer_ids,
+                                accepted_offer_ids=accepted_offer_ids,
+                                active_offer_id=active_offer_id,
+                                last_state_change_reason="mediator declared impasse",
+                                provider_descriptor=mediator_summary,
+                                provider_latency_ms=0.0,
+                            )
+                        )
+                        return self._result(
+                            scenario=scenario,
+                            agreement=None,
+                            turn_log=turn_log,
+                            stopped_reason="mediator_impasse",
+                            provider_summary=provider_summary,
+                            mediator_summary=mediator_summary,
+                        )
+
+                    existing_mediated = mediated_offer_by_owner.get(counterparty)
+                    already_active = (
+                        existing_mediated is not None
+                        and existing_mediated not in rejected_offer_ids
+                    )
+                    if outcome.compromise_terms is not None and not already_active:
+                        proposal_sequence += 1
+                        mediated_id = f"M{proposal_sequence}"
+                        # The compromise is tabled on behalf of the counterparty as an
+                        # additional option. It does NOT replace that agent's own latest
+                        # proposal, so the acting agent may still accept either one.
+                        proposals[mediated_id] = StoredProposal(
+                            proposal_id=mediated_id,
+                            proposer=counterparty,
+                            terms=outcome.compromise_terms,
+                        )
+                        active_offer_ids.add(mediated_id)
+                        active_offer_id = mediated_id
+                        mediated_offer_ids.add(mediated_id)
+                        mediated_offer_by_owner[counterparty] = mediated_id
+                        last_state_change_reason = (
+                            f"mediator tabled {mediated_id} on behalf of {counterparty}"
+                        )
+                        record(
+                            self._build_turn_log(
+                                round_number=round_number,
+                                role="mediator",
+                                action=NegotiationAction(
+                                    agent_role="mediator",
+                                    action_type=NegotiationActionType.MEDIATE,
+                                    offer_terms=outcome.compromise_terms,
+                                    proposal_id=mediated_id,
+                                    rationale=outcome.rationale,
+                                ),
+                                validation=ValidationResult(True, ()),
+                                negotiation_state="running",
+                                proposals=proposals,
+                                latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
+                                active_offer_ids=active_offer_ids,
+                                rejected_offer_ids=rejected_offer_ids,
+                                accepted_offer_ids=accepted_offer_ids,
+                                active_offer_id=active_offer_id,
+                                last_state_change_reason=last_state_change_reason,
+                                provider_descriptor=mediator_summary,
+                                provider_latency_ms=0.0,
+                            )
+                        )
+
                 started_at = time.perf_counter()
                 action = provider.generate_action(role, scenario, round_number, tuple(turn_log))
                 provider_latency_ms = round((time.perf_counter() - started_at) * 1000, 3)
@@ -120,12 +226,13 @@ class NegotiationEngine:
                         proposals=proposals,
                         latest_valid_proposal_by_agent=latest_valid_proposal_by_agent,
                         rejected_offer_ids=rejected_offer_ids,
+                        mediated_offer_ids=mediated_offer_ids,
                     )
                     if not context_validation.is_valid:
                         validation = context_validation
 
                 if not validation.is_valid:
-                    turn_log.append(
+                    record(
                         self._build_turn_log(
                             round_number=round_number,
                             role=role,
@@ -149,10 +256,11 @@ class NegotiationEngine:
                         turn_log=turn_log,
                         stopped_reason="invalid_provider_output",
                         provider_summary=provider_summary,
+                        mediator_summary=mediator_summary,
                     )
 
                 if action.action_type == NegotiationActionType.WALK_AWAY:
-                    turn_log.append(
+                    record(
                         self._build_turn_log(
                             round_number=round_number,
                             role=role,
@@ -176,6 +284,7 @@ class NegotiationEngine:
                         turn_log=turn_log,
                         stopped_reason="walk_away",
                         provider_summary=provider_summary,
+                        mediator_summary=mediator_summary,
                     )
 
                 if action.action_type == NegotiationActionType.REJECT:
@@ -185,7 +294,7 @@ class NegotiationEngine:
                     if active_offer_id == action.target_offer_id:
                         active_offer_id = None
                     last_state_change_reason = f"{role} rejected {action.target_offer_id}"
-                    turn_log.append(
+                    record(
                         self._build_turn_log(
                             round_number=round_number,
                             role=role,
@@ -214,7 +323,7 @@ class NegotiationEngine:
                         scenario=scenario,
                     )
                     if not private_acceptance_validation.is_valid:
-                        turn_log.append(
+                        record(
                             self._build_turn_log(
                                 round_number=round_number,
                                 role=role,
@@ -238,6 +347,7 @@ class NegotiationEngine:
                             turn_log=turn_log,
                             stopped_reason="invalid_provider_output",
                             provider_summary=provider_summary,
+                            mediator_summary=mediator_summary,
                         )
 
                     agreement = Agreement(
@@ -246,10 +356,11 @@ class NegotiationEngine:
                         proposed_by=proposal.proposer,
                         accepted_by=role,
                         reached_at_round=round_number,
+                        mediated=proposal.proposal_id in mediated_offer_ids,
                     )
                     agreement_validation = validate_agreement(agreement, scenario)
                     if not agreement_validation.is_valid:
-                        turn_log.append(
+                        record(
                             self._build_turn_log(
                                 round_number=round_number,
                                 role=role,
@@ -273,11 +384,12 @@ class NegotiationEngine:
                             turn_log=turn_log,
                             stopped_reason="invalid_provider_output",
                             provider_summary=provider_summary,
+                            mediator_summary=mediator_summary,
                         )
 
                     accepted_offer_ids.add(proposal.proposal_id)
                     active_offer_ids.clear()
-                    turn_log.append(
+                    record(
                         self._build_turn_log(
                             round_number=round_number,
                             role=role,
@@ -301,9 +413,10 @@ class NegotiationEngine:
                         turn_log=turn_log,
                         stopped_reason="agreement_reached",
                         provider_summary=provider_summary,
+                        mediator_summary=mediator_summary,
                     )
 
-                turn_log.append(
+                record(
                     self._build_turn_log(
                         round_number=round_number,
                         role=role,
@@ -328,6 +441,7 @@ class NegotiationEngine:
             turn_log=turn_log,
             stopped_reason="max_rounds_reached",
             provider_summary=provider_summary,
+            mediator_summary=mediator_summary,
         )
 
     def _validate_accept_context(
@@ -337,9 +451,16 @@ class NegotiationEngine:
         proposals: dict[str, StoredProposal],
         latest_valid_proposal_by_agent: dict[AgentRole, str],
         rejected_offer_ids: set[str],
+        mediated_offer_ids: set[str] | None = None,
     ) -> ValidationResult:
-        """Check that ACCEPT targets a live counterparty proposal."""
+        """Check that ACCEPT targets a live counterparty proposal.
 
+        A mediator compromise is a live option tabled on behalf of the
+        counterparty, so it is acceptable without being that agent's own latest
+        proposal; only the "latest valid proposal" rule is relaxed for it.
+        """
+
+        mediated_offer_ids = mediated_offer_ids or set()
         errors: list[str] = []
 
         if action.target_offer_id is None:
@@ -352,9 +473,10 @@ class NegotiationEngine:
         if proposal.proposer == role:
             errors.append("ACCEPT must target a proposal from the counterparty")
 
-        expected_latest_id = latest_valid_proposal_by_agent.get(proposal.proposer)
-        if action.target_offer_id != expected_latest_id:
-            errors.append("ACCEPT must target the latest valid proposal from that agent")
+        if action.target_offer_id not in mediated_offer_ids:
+            expected_latest_id = latest_valid_proposal_by_agent.get(proposal.proposer)
+            if action.target_offer_id != expected_latest_id:
+                errors.append("ACCEPT must target the latest valid proposal from that agent")
 
         return ValidationResult(is_valid=not errors, errors=tuple(errors))
 
@@ -439,6 +561,10 @@ class NegotiationEngine:
             return f"ACCEPT closed negotiation with state {negotiation_state}"
         if action.action_type == NegotiationActionType.WALK_AWAY:
             return "WALK_AWAY closed negotiation"
+        if action.action_type == NegotiationActionType.MEDIATE:
+            if action.proposal_id is None:
+                return "MEDIATOR declared impasse: no zone of possible agreement"
+            return f"MEDIATOR tabled compromise {action.proposal_id}"
         return negotiation_state
 
     def _result(
@@ -448,6 +574,7 @@ class NegotiationEngine:
         turn_log: list[TurnLog],
         stopped_reason: str,
         provider_summary: dict[AgentRole, ProviderDescriptor],
+        mediator_summary: ProviderDescriptor | None = None,
     ) -> NegotiationResult:
         return NegotiationResult(
             scenario=scenario,
@@ -456,6 +583,7 @@ class NegotiationEngine:
             turn_log=tuple(turn_log),
             stopped_reason=stopped_reason,
             provider_summary=provider_summary,
+            mediator_summary=mediator_summary,
         )
 
     def _describe_provider(self, provider: ActionProvider) -> ProviderDescriptor:

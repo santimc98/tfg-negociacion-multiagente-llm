@@ -1,0 +1,3075 @@
+{
+  "comparison_config": {
+    "max_rounds": 8,
+    "scenario_count": 3,
+    "seed": 42
+  },
+  "provider_results": [
+    {
+      "provider_config": {
+        "history_limit": null,
+        "model_name": null,
+        "provider_kind": "mock",
+        "temperature": null,
+        "timeout_seconds": null
+      },
+      "runs": [
+        {
+          "metrics": {
+            "agreement_balance_gap": 0.1642,
+            "agreement_reached": true,
+            "buyer_utility": 0.5685,
+            "joint_utility": 1.3012,
+            "private_feasibility_buyer": true,
+            "private_feasibility_seller": true,
+            "rounds_used": 2,
+            "seller_utility": 0.7327,
+            "valid_agreement": true
+          },
+          "result": {
+            "agreement": {
+              "accepted_by": "buyer",
+              "accepted_offer_id": "O2",
+              "proposed_by": "seller",
+              "reached_at_round": 2,
+              "terms": {
+                "delivery_deadline": "2026-05-24",
+                "quantity": 129,
+                "unit_price": 107.03
+              }
+            },
+            "metrics": {
+              "agreement_balance_gap": 0.1642,
+              "agreement_reached": true,
+              "buyer_utility": 0.5685,
+              "joint_utility": 1.3012,
+              "private_feasibility_buyer": true,
+              "private_feasibility_seller": true,
+              "rounds_used": 2,
+              "seller_utility": 0.7327,
+              "valid_agreement": true
+            },
+            "providers": {
+              "buyer": {
+                "model_name": null,
+                "provider_kind": "mock"
+              },
+              "seller": {
+                "model_name": null,
+                "provider_kind": "mock"
+              }
+            },
+            "scenario": {
+              "buyer_guardrails": {
+                "buyer_latest_acceptable_deadline": "2026-05-27",
+                "buyer_max_acceptable_unit_price": 108.03,
+                "buyer_min_acceptable_quantity": 116
+              },
+              "buyer_preferences": {
+                "target_delivery_deadline": "2026-05-24",
+                "target_quantity": 116,
+                "target_unit_price": 87.89
+              },
+              "constraints": {
+                "earliest_delivery_deadline": "2026-05-11",
+                "latest_delivery_deadline": "2026-06-09",
+                "max_quantity": 183,
+                "max_unit_price": 116.61,
+                "min_quantity": 48,
+                "min_unit_price": 78.31
+              },
+              "description": "Controlled simulated supply negotiation scenario.",
+              "scenario_id": "simulated-supply-001",
+              "seller_guardrails": {
+                "seller_earliest_acceptable_deadline": "2026-05-22",
+                "seller_min_acceptable_quantity": 116,
+                "seller_min_acceptable_unit_price": 85.97
+              },
+              "seller_preferences": {
+                "target_delivery_deadline": "2026-05-30",
+                "target_quantity": 129,
+                "target_unit_price": 107.03
+              }
+            },
+            "stopped_reason": "agreement_reached",
+            "turn_history": [
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 116,
+                    "unit_price": 87.89
+                  },
+                  "proposal_id": "O1",
+                  "rationale": "Deterministic mock concession.",
+                  "target_offer_id": null
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.007,
+                "provider_model_name": null,
+                "result_summary": "PROPOSE accepted as valid proposal O1",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O1",
+                  "active_offer_ids": [
+                    "O1"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O1",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 129,
+                    "unit_price": 107.03
+                  },
+                  "proposal_id": "O2",
+                  "rationale": "Deterministic mock concession.",
+                  "target_offer_id": "O1"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.008,
+                "provider_model_name": null,
+                "result_summary": "COUNTER accepted as valid proposal O2",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O2",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "ACCEPT",
+                  "agent_role": "buyer",
+                  "offer_terms": null,
+                  "proposal_id": null,
+                  "rationale": "The seller proposal is acceptable for the simulated buyer.",
+                  "target_offer_id": "O2"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "agreement_reached",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.003,
+                "provider_model_name": null,
+                "result_summary": "ACCEPT closed negotiation with state agreement_reached",
+                "round_number": 2,
+                "state_after": {
+                  "accepted_offer_ids": [
+                    "O2"
+                  ],
+                  "active_offer_id": null,
+                  "active_offer_ids": [],
+                  "last_state_change_reason": "buyer accepted O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              }
+            ]
+          }
+        },
+        {
+          "metrics": {
+            "agreement_balance_gap": 0.2202,
+            "agreement_reached": true,
+            "buyer_utility": 0.5365,
+            "joint_utility": 1.2932,
+            "private_feasibility_buyer": true,
+            "private_feasibility_seller": true,
+            "rounds_used": 2,
+            "seller_utility": 0.7567,
+            "valid_agreement": true
+          },
+          "result": {
+            "agreement": {
+              "accepted_by": "buyer",
+              "accepted_offer_id": "O2",
+              "proposed_by": "seller",
+              "reached_at_round": 2,
+              "terms": {
+                "delivery_deadline": "2026-05-24",
+                "quantity": 120,
+                "unit_price": 106.97
+              }
+            },
+            "metrics": {
+              "agreement_balance_gap": 0.2202,
+              "agreement_reached": true,
+              "buyer_utility": 0.5365,
+              "joint_utility": 1.2932,
+              "private_feasibility_buyer": true,
+              "private_feasibility_seller": true,
+              "rounds_used": 2,
+              "seller_utility": 0.7567,
+              "valid_agreement": true
+            },
+            "providers": {
+              "buyer": {
+                "model_name": null,
+                "provider_kind": "mock"
+              },
+              "seller": {
+                "model_name": null,
+                "provider_kind": "mock"
+              }
+            },
+            "scenario": {
+              "buyer_guardrails": {
+                "buyer_latest_acceptable_deadline": "2026-05-27",
+                "buyer_max_acceptable_unit_price": 107.97,
+                "buyer_min_acceptable_quantity": 104
+              },
+              "buyer_preferences": {
+                "target_delivery_deadline": "2026-05-24",
+                "target_quantity": 104,
+                "target_unit_price": 87.78
+              },
+              "constraints": {
+                "earliest_delivery_deadline": "2026-05-11",
+                "latest_delivery_deadline": "2026-06-05",
+                "max_quantity": 175,
+                "max_unit_price": 116.56,
+                "min_quantity": 42,
+                "min_unit_price": 78.18
+              },
+              "description": "Controlled simulated supply negotiation scenario.",
+              "scenario_id": "simulated-supply-002",
+              "seller_guardrails": {
+                "seller_earliest_acceptable_deadline": "2026-05-22",
+                "seller_min_acceptable_quantity": 104,
+                "seller_min_acceptable_unit_price": 85.86
+              },
+              "seller_preferences": {
+                "target_delivery_deadline": "2026-06-04",
+                "target_quantity": 120,
+                "target_unit_price": 106.97
+              }
+            },
+            "stopped_reason": "agreement_reached",
+            "turn_history": [
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 104,
+                    "unit_price": 87.78
+                  },
+                  "proposal_id": "O1",
+                  "rationale": "Deterministic mock concession.",
+                  "target_offer_id": null
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.004,
+                "provider_model_name": null,
+                "result_summary": "PROPOSE accepted as valid proposal O1",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O1",
+                  "active_offer_ids": [
+                    "O1"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O1",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 120,
+                    "unit_price": 106.97
+                  },
+                  "proposal_id": "O2",
+                  "rationale": "Deterministic mock concession.",
+                  "target_offer_id": "O1"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.004,
+                "provider_model_name": null,
+                "result_summary": "COUNTER accepted as valid proposal O2",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O2",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "ACCEPT",
+                  "agent_role": "buyer",
+                  "offer_terms": null,
+                  "proposal_id": null,
+                  "rationale": "The seller proposal is acceptable for the simulated buyer.",
+                  "target_offer_id": "O2"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "agreement_reached",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.002,
+                "provider_model_name": null,
+                "result_summary": "ACCEPT closed negotiation with state agreement_reached",
+                "round_number": 2,
+                "state_after": {
+                  "accepted_offer_ids": [
+                    "O2"
+                  ],
+                  "active_offer_id": null,
+                  "active_offer_ids": [],
+                  "last_state_change_reason": "buyer accepted O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              }
+            ]
+          }
+        },
+        {
+          "metrics": {
+            "agreement_balance_gap": 0.0412,
+            "agreement_reached": true,
+            "buyer_utility": 0.6211,
+            "joint_utility": 1.2834,
+            "private_feasibility_buyer": true,
+            "private_feasibility_seller": true,
+            "rounds_used": 2,
+            "seller_utility": 0.6623,
+            "valid_agreement": true
+          },
+          "result": {
+            "agreement": {
+              "accepted_by": "buyer",
+              "accepted_offer_id": "O2",
+              "proposed_by": "seller",
+              "reached_at_round": 2,
+              "terms": {
+                "delivery_deadline": "2026-05-20",
+                "quantity": 138,
+                "unit_price": 107.67
+              }
+            },
+            "metrics": {
+              "agreement_balance_gap": 0.0412,
+              "agreement_reached": true,
+              "buyer_utility": 0.6211,
+              "joint_utility": 1.2834,
+              "private_feasibility_buyer": true,
+              "private_feasibility_seller": true,
+              "rounds_used": 2,
+              "seller_utility": 0.6623,
+              "valid_agreement": true
+            },
+            "providers": {
+              "buyer": {
+                "model_name": null,
+                "provider_kind": "mock"
+              },
+              "seller": {
+                "model_name": null,
+                "provider_kind": "mock"
+              }
+            },
+            "scenario": {
+              "buyer_guardrails": {
+                "buyer_latest_acceptable_deadline": "2026-05-23",
+                "buyer_max_acceptable_unit_price": 108.67,
+                "buyer_min_acceptable_quantity": 120
+              },
+              "buyer_preferences": {
+                "target_delivery_deadline": "2026-05-20",
+                "target_quantity": 120,
+                "target_unit_price": 85.14
+              },
+              "constraints": {
+                "earliest_delivery_deadline": "2026-05-11",
+                "latest_delivery_deadline": "2026-06-18",
+                "max_quantity": 185,
+                "max_unit_price": 118.94,
+                "min_quantity": 65,
+                "min_unit_price": 73.87
+              },
+              "description": "Controlled simulated supply negotiation scenario.",
+              "scenario_id": "simulated-supply-003",
+              "seller_guardrails": {
+                "seller_earliest_acceptable_deadline": "2026-05-18",
+                "seller_min_acceptable_quantity": 120,
+                "seller_min_acceptable_unit_price": 82.88
+              },
+              "seller_preferences": {
+                "target_delivery_deadline": "2026-05-28",
+                "target_quantity": 138,
+                "target_unit_price": 107.67
+              }
+            },
+            "stopped_reason": "agreement_reached",
+            "turn_history": [
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-20",
+                    "quantity": 120,
+                    "unit_price": 85.14
+                  },
+                  "proposal_id": "O1",
+                  "rationale": "Deterministic mock concession.",
+                  "target_offer_id": null
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.003,
+                "provider_model_name": null,
+                "result_summary": "PROPOSE accepted as valid proposal O1",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O1",
+                  "active_offer_ids": [
+                    "O1"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O1",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-20",
+                    "quantity": 138,
+                    "unit_price": 107.67
+                  },
+                  "proposal_id": "O2",
+                  "rationale": "Deterministic mock concession.",
+                  "target_offer_id": "O1"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.003,
+                "provider_model_name": null,
+                "result_summary": "COUNTER accepted as valid proposal O2",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O2",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "ACCEPT",
+                  "agent_role": "buyer",
+                  "offer_terms": null,
+                  "proposal_id": null,
+                  "rationale": "The seller proposal is acceptable for the simulated buyer.",
+                  "target_offer_id": "O2"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "agreement_reached",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.001,
+                "provider_model_name": null,
+                "result_summary": "ACCEPT closed negotiation with state agreement_reached",
+                "round_number": 2,
+                "state_after": {
+                  "accepted_offer_ids": [
+                    "O2"
+                  ],
+                  "active_offer_id": null,
+                  "active_offer_ids": [],
+                  "last_state_change_reason": "buyer accepted O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              }
+            ]
+          }
+        }
+      ],
+      "summary": {
+        "agreement_rate": 1.0,
+        "average_balance_gap": 0.1419,
+        "average_buyer_utility": 0.5754,
+        "average_provider_latency_ms": 0.004,
+        "average_rounds": 2.0,
+        "average_seller_utility": 0.7172,
+        "feasible_agreement_rate": 1.0,
+        "invalid_output_rate": 0.0,
+        "max_rounds_rate": 0.0,
+        "model_name": null,
+        "provider_kind": "mock",
+        "total_runs": 3,
+        "walk_away_rate": 0.0
+      }
+    },
+    {
+      "provider_config": {
+        "history_limit": 4,
+        "model_name": "gemma4:latest",
+        "provider_kind": "ollama",
+        "temperature": 0.1,
+        "timeout_seconds": 180.0
+      },
+      "runs": [
+        {
+          "metrics": {
+            "agreement_balance_gap": 0.0,
+            "agreement_reached": false,
+            "buyer_utility": 0.0,
+            "joint_utility": 0.0,
+            "private_feasibility_buyer": false,
+            "private_feasibility_seller": false,
+            "rounds_used": 8,
+            "seller_utility": 0.0,
+            "valid_agreement": false
+          },
+          "result": {
+            "agreement": null,
+            "metrics": {
+              "agreement_balance_gap": 0.0,
+              "agreement_reached": false,
+              "buyer_utility": 0.0,
+              "joint_utility": 0.0,
+              "private_feasibility_buyer": false,
+              "private_feasibility_seller": false,
+              "rounds_used": 8,
+              "seller_utility": 0.0,
+              "valid_agreement": false
+            },
+            "providers": {
+              "buyer": {
+                "model_name": "gemma4:latest",
+                "provider_kind": "ollama"
+              },
+              "seller": {
+                "model_name": "gemma4:latest",
+                "provider_kind": "ollama"
+              }
+            },
+            "scenario": {
+              "buyer_guardrails": {
+                "buyer_latest_acceptable_deadline": "2026-05-27",
+                "buyer_max_acceptable_unit_price": 108.03,
+                "buyer_min_acceptable_quantity": 116
+              },
+              "buyer_preferences": {
+                "target_delivery_deadline": "2026-05-24",
+                "target_quantity": 116,
+                "target_unit_price": 87.89
+              },
+              "constraints": {
+                "earliest_delivery_deadline": "2026-05-11",
+                "latest_delivery_deadline": "2026-06-09",
+                "max_quantity": 183,
+                "max_unit_price": 116.61,
+                "min_quantity": 48,
+                "min_unit_price": 78.31
+              },
+              "description": "Controlled simulated supply negotiation scenario.",
+              "scenario_id": "simulated-supply-001",
+              "seller_guardrails": {
+                "seller_earliest_acceptable_deadline": "2026-05-22",
+                "seller_min_acceptable_quantity": 116,
+                "seller_min_acceptable_unit_price": 85.97
+              },
+              "seller_preferences": {
+                "target_delivery_deadline": "2026-05-30",
+                "target_quantity": 129,
+                "target_unit_price": 107.03
+              }
+            },
+            "stopped_reason": "max_rounds_reached",
+            "turn_history": [
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 116,
+                    "unit_price": 87.89
+                  },
+                  "proposal_id": "O1",
+                  "rationale": "This proposal meets the target price and quantity while proposing a delivery date within the acceptable range.",
+                  "target_offer_id": null
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 48283.454,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "PROPOSE accepted as valid proposal O1",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O1",
+                  "active_offer_ids": [
+                    "O1"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O1",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-26",
+                    "quantity": 120,
+                    "unit_price": 95.0
+                  },
+                  "proposal_id": "O2",
+                  "rationale": "I can improve the price and delivery date slightly.",
+                  "target_offer_id": "O1"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 57781.76,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O2",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O2",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 116,
+                    "unit_price": 90.0
+                  },
+                  "proposal_id": "O3",
+                  "rationale": "I will counter the seller's proposal by adjusting the unit price and quantity to be closer to my original proposal while maintaining the desired delivery date.",
+                  "target_offer_id": "O2"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 69010.414,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O3",
+                "round_number": 2,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O3",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O3",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O3",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-26",
+                    "quantity": 120,
+                    "unit_price": 92.0
+                  },
+                  "proposal_id": "O4",
+                  "rationale": "I am willing to meet the quantity and delivery deadline, but I need a better price.",
+                  "target_offer_id": "O3"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 79328.28,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O4",
+                "round_number": 2,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O4",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O4",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O3",
+                    "seller": "O4"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 116,
+                    "unit_price": 90.0
+                  },
+                  "proposal_id": "O5",
+                  "rationale": "I am countering the last offer to get closer to my original price and quantity.",
+                  "target_offer_id": "O4"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 78035.359,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O5",
+                "round_number": 3,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O5",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O5",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O5",
+                    "seller": "O4"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-26",
+                    "quantity": 120,
+                    "unit_price": 91.0
+                  },
+                  "proposal_id": "O6",
+                  "rationale": "I am slightly increasing the unit price and keeping the quantity and deadline consistent with the last accepted offer.",
+                  "target_offer_id": "O5"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 80845.046,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O6",
+                "round_number": 3,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O6",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O6",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O5",
+                    "seller": "O6"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 116,
+                    "unit_price": 88.0
+                  },
+                  "proposal_id": "O7",
+                  "rationale": "I am countering with a price closer to my target and maintaining the preferred delivery date and quantity.",
+                  "target_offer_id": "O6"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 76076.012,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O7",
+                "round_number": 4,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O7",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O7",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O7",
+                    "seller": "O6"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-26",
+                    "quantity": 120,
+                    "unit_price": 91.5
+                  },
+                  "proposal_id": "O8",
+                  "rationale": "I will slightly increase the price and keep the quantity and deadline stable.",
+                  "target_offer_id": "O7"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 79058.593,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O8",
+                "round_number": 4,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O8",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O8",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O7",
+                    "seller": "O8"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 116,
+                    "unit_price": 87.0
+                  },
+                  "proposal_id": "O9",
+                  "rationale": "I am making a final counteroffer to meet the target price and delivery date.",
+                  "target_offer_id": "O8"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 78450.958,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O9",
+                "round_number": 5,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O9",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O9",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O9",
+                    "seller": "O8"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-26",
+                    "quantity": 120,
+                    "unit_price": 90.0
+                  },
+                  "proposal_id": "O10",
+                  "rationale": "I will slightly increase the price and keep the quantity and deadline stable.",
+                  "target_offer_id": "O9"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 82792.232,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O10",
+                "round_number": 5,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O10",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O10",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O9",
+                    "seller": "O10"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 116,
+                    "unit_price": 87.5
+                  },
+                  "proposal_id": "O11",
+                  "rationale": "I am making a final counter-offer to meet the target price and quantity.",
+                  "target_offer_id": "O10"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 84140.669,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O11",
+                "round_number": 6,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O11",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O11",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O11",
+                    "seller": "O10"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-26",
+                    "quantity": 120,
+                    "unit_price": 90.5
+                  },
+                  "proposal_id": "O12",
+                  "rationale": "I am proposing a middle ground that addresses the buyer's concerns while maintaining a reasonable margin.",
+                  "target_offer_id": null
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 73440.551,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "PROPOSE accepted as valid proposal O12",
+                "round_number": 6,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O12",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O12",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O11",
+                    "seller": "O12"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 116,
+                    "unit_price": 87.5
+                  },
+                  "proposal_id": "O13",
+                  "rationale": "I am countering the last proposal to meet my target price and delivery date.",
+                  "target_offer_id": "O12"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 66544.175,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O13",
+                "round_number": 7,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O13",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O13",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O13",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O13",
+                    "seller": "O12"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-26",
+                    "quantity": 120,
+                    "unit_price": 90.0
+                  },
+                  "proposal_id": "O14",
+                  "rationale": "Revisiting the initial terms to move the negotiation forward.",
+                  "target_offer_id": null
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 75896.903,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "PROPOSE accepted as valid proposal O14",
+                "round_number": 7,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O14",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O13",
+                    "O14",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O14",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O13",
+                    "seller": "O14"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 116,
+                    "unit_price": 87.5
+                  },
+                  "proposal_id": "O15",
+                  "rationale": "This counter-offer maintains the buyer's preferred price and quantity while accepting the seller's latest proposal structure.",
+                  "target_offer_id": "O14"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 80361.088,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O15",
+                "round_number": 8,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O15",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O13",
+                    "O14",
+                    "O15",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O15",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O15",
+                    "seller": "O14"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-26",
+                    "quantity": 120,
+                    "unit_price": 90.0
+                  },
+                  "proposal_id": "O16",
+                  "rationale": "I will propose a price and quantity close to the last accepted offer while maintaining a reasonable delivery deadline.",
+                  "target_offer_id": null
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 93529.883,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "PROPOSE accepted as valid proposal O16",
+                "round_number": 8,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O16",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O13",
+                    "O14",
+                    "O15",
+                    "O16",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O16",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O15",
+                    "seller": "O16"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              }
+            ]
+          }
+        },
+        {
+          "metrics": {
+            "agreement_balance_gap": 0.0,
+            "agreement_reached": false,
+            "buyer_utility": 0.0,
+            "joint_utility": 0.0,
+            "private_feasibility_buyer": false,
+            "private_feasibility_seller": false,
+            "rounds_used": 8,
+            "seller_utility": 0.0,
+            "valid_agreement": false
+          },
+          "result": {
+            "agreement": null,
+            "metrics": {
+              "agreement_balance_gap": 0.0,
+              "agreement_reached": false,
+              "buyer_utility": 0.0,
+              "joint_utility": 0.0,
+              "private_feasibility_buyer": false,
+              "private_feasibility_seller": false,
+              "rounds_used": 8,
+              "seller_utility": 0.0,
+              "valid_agreement": false
+            },
+            "providers": {
+              "buyer": {
+                "model_name": "gemma4:latest",
+                "provider_kind": "ollama"
+              },
+              "seller": {
+                "model_name": "gemma4:latest",
+                "provider_kind": "ollama"
+              }
+            },
+            "scenario": {
+              "buyer_guardrails": {
+                "buyer_latest_acceptable_deadline": "2026-05-27",
+                "buyer_max_acceptable_unit_price": 107.97,
+                "buyer_min_acceptable_quantity": 104
+              },
+              "buyer_preferences": {
+                "target_delivery_deadline": "2026-05-24",
+                "target_quantity": 104,
+                "target_unit_price": 87.78
+              },
+              "constraints": {
+                "earliest_delivery_deadline": "2026-05-11",
+                "latest_delivery_deadline": "2026-06-05",
+                "max_quantity": 175,
+                "max_unit_price": 116.56,
+                "min_quantity": 42,
+                "min_unit_price": 78.18
+              },
+              "description": "Controlled simulated supply negotiation scenario.",
+              "scenario_id": "simulated-supply-002",
+              "seller_guardrails": {
+                "seller_earliest_acceptable_deadline": "2026-05-22",
+                "seller_min_acceptable_quantity": 104,
+                "seller_min_acceptable_unit_price": 85.86
+              },
+              "seller_preferences": {
+                "target_delivery_deadline": "2026-06-04",
+                "target_quantity": 120,
+                "target_unit_price": 106.97
+              }
+            },
+            "stopped_reason": "max_rounds_reached",
+            "turn_history": [
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 104,
+                    "unit_price": 87.78
+                  },
+                  "proposal_id": "O1",
+                  "rationale": null,
+                  "target_offer_id": null
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 40204.457,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "PROPOSE accepted as valid proposal O1",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O1",
+                  "active_offer_ids": [
+                    "O1"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O1",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-06-04",
+                    "quantity": 120,
+                    "unit_price": 106.97
+                  },
+                  "proposal_id": "O2",
+                  "rationale": "I am countering with my target terms.",
+                  "target_offer_id": "O1"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 75138.625,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O2",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O2",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-27",
+                    "quantity": 120,
+                    "unit_price": 95.0
+                  },
+                  "proposal_id": "O3",
+                  "rationale": "I will counter with a unit price closer to my original target while maintaining the quantity and adjusting the deadline to meet the guardrail.",
+                  "target_offer_id": "O2"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 74753.097,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O3",
+                "round_number": 2,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O3",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O3",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O3",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-06-04",
+                    "quantity": 120,
+                    "unit_price": 100.0
+                  },
+                  "proposal_id": "O4",
+                  "rationale": "I will counter the buyer's offer by slightly increasing the price and keeping the other terms the same.",
+                  "target_offer_id": "O3"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 75702.024,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O4",
+                "round_number": 2,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O4",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O4",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O3",
+                    "seller": "O4"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-27",
+                    "quantity": 120,
+                    "unit_price": 95.0
+                  },
+                  "proposal_id": "O5",
+                  "rationale": "I am countering the seller's last offer by maintaining the quantity and delivery deadline while lowering the unit price.",
+                  "target_offer_id": "O4"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 83891.478,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O5",
+                "round_number": 3,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O5",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O5",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O5",
+                    "seller": "O4"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-06-04",
+                    "quantity": 120,
+                    "unit_price": 102.5
+                  },
+                  "proposal_id": "O6",
+                  "rationale": "I will meet the buyer's price point while maintaining the delivery date and quantity.",
+                  "target_offer_id": "O5"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 106327.653,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O6",
+                "round_number": 3,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O6",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O6",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O5",
+                    "seller": "O6"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-27",
+                    "quantity": 120,
+                    "unit_price": 92.5
+                  },
+                  "proposal_id": "O7",
+                  "rationale": "I am willing to meet the delivery deadline and reduce the unit price further.",
+                  "target_offer_id": "O6"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 70385.576,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O7",
+                "round_number": 4,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O7",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O7",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O7",
+                    "seller": "O6"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-06-04",
+                    "quantity": 120,
+                    "unit_price": 105.0
+                  },
+                  "proposal_id": "O8",
+                  "rationale": "I am countering with a price that is closer to the target price while maintaining the agreed delivery date.",
+                  "target_offer_id": "O7"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 102574.385,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O8",
+                "round_number": 4,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O8",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O8",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O7",
+                    "seller": "O8"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-27",
+                    "quantity": 120,
+                    "unit_price": 90.0
+                  },
+                  "proposal_id": "O9",
+                  "rationale": "I am willing to meet in the middle on the price and keep the delivery date.",
+                  "target_offer_id": "O8"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 86844.443,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O9",
+                "round_number": 5,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O9",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O9",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O9",
+                    "seller": "O8"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-06-04",
+                    "quantity": 120,
+                    "unit_price": 105.0
+                  },
+                  "proposal_id": "O10",
+                  "rationale": "I will counter with a price that is slightly higher than the buyer's last offer, while maintaining the delivery deadline and quantity.",
+                  "target_offer_id": "O9"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 76636.715,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O10",
+                "round_number": 5,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O10",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O10",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O9",
+                    "seller": "O10"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-27",
+                    "quantity": 120,
+                    "unit_price": 90.0
+                  },
+                  "proposal_id": "O11",
+                  "rationale": "I am maintaining my offer on the unit price while keeping the delivery date and quantity consistent with my previous counter-offer.",
+                  "target_offer_id": "O10"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 81057.417,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O11",
+                "round_number": 6,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O11",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O11",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O11",
+                    "seller": "O10"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-06-01",
+                    "quantity": 120,
+                    "unit_price": 100.0
+                  },
+                  "proposal_id": "O12",
+                  "rationale": "I will slightly adjust the price and delivery date to meet the buyer's expectations.",
+                  "target_offer_id": "O11"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 78161.686,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O12",
+                "round_number": 6,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O12",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O12",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O11",
+                    "seller": "O12"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-27",
+                    "quantity": 120,
+                    "unit_price": 95.0
+                  },
+                  "proposal_id": "O13",
+                  "rationale": "I am willing to meet the delivery deadline and slightly improve the price.",
+                  "target_offer_id": "O12"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 102430.277,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O13",
+                "round_number": 7,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O13",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O13",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O13",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O13",
+                    "seller": "O12"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-06-01",
+                    "quantity": 120,
+                    "unit_price": 102.0
+                  },
+                  "proposal_id": "O14",
+                  "rationale": "I will meet the buyer's price expectation while maintaining a reasonable delivery date.",
+                  "target_offer_id": "O13"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 74704.555,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O14",
+                "round_number": 7,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O14",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O13",
+                    "O14",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O14",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O13",
+                    "seller": "O14"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-27",
+                    "quantity": 120,
+                    "unit_price": 92.0
+                  },
+                  "proposal_id": "O15",
+                  "rationale": "I propose a unit price of $92.0 to meet the delivery deadline and quantity.",
+                  "target_offer_id": "O14"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 90333.592,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O15",
+                "round_number": 8,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O15",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O13",
+                    "O14",
+                    "O15",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O15",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O15",
+                    "seller": "O14"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-06-01",
+                    "quantity": 120,
+                    "unit_price": 105.0
+                  },
+                  "proposal_id": "O16",
+                  "rationale": "I am countering with a unit price of 105.0, which is closer to the target price and within the public range.",
+                  "target_offer_id": "O15"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 91311.072,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O16",
+                "round_number": 8,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O16",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O13",
+                    "O14",
+                    "O15",
+                    "O16",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O16",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O15",
+                    "seller": "O16"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              }
+            ]
+          }
+        },
+        {
+          "metrics": {
+            "agreement_balance_gap": 0.0,
+            "agreement_reached": false,
+            "buyer_utility": 0.0,
+            "joint_utility": 0.0,
+            "private_feasibility_buyer": false,
+            "private_feasibility_seller": false,
+            "rounds_used": 8,
+            "seller_utility": 0.0,
+            "valid_agreement": false
+          },
+          "result": {
+            "agreement": null,
+            "metrics": {
+              "agreement_balance_gap": 0.0,
+              "agreement_reached": false,
+              "buyer_utility": 0.0,
+              "joint_utility": 0.0,
+              "private_feasibility_buyer": false,
+              "private_feasibility_seller": false,
+              "rounds_used": 8,
+              "seller_utility": 0.0,
+              "valid_agreement": false
+            },
+            "providers": {
+              "buyer": {
+                "model_name": "gemma4:latest",
+                "provider_kind": "ollama"
+              },
+              "seller": {
+                "model_name": "gemma4:latest",
+                "provider_kind": "ollama"
+              }
+            },
+            "scenario": {
+              "buyer_guardrails": {
+                "buyer_latest_acceptable_deadline": "2026-05-23",
+                "buyer_max_acceptable_unit_price": 108.67,
+                "buyer_min_acceptable_quantity": 120
+              },
+              "buyer_preferences": {
+                "target_delivery_deadline": "2026-05-20",
+                "target_quantity": 120,
+                "target_unit_price": 85.14
+              },
+              "constraints": {
+                "earliest_delivery_deadline": "2026-05-11",
+                "latest_delivery_deadline": "2026-06-18",
+                "max_quantity": 185,
+                "max_unit_price": 118.94,
+                "min_quantity": 65,
+                "min_unit_price": 73.87
+              },
+              "description": "Controlled simulated supply negotiation scenario.",
+              "scenario_id": "simulated-supply-003",
+              "seller_guardrails": {
+                "seller_earliest_acceptable_deadline": "2026-05-18",
+                "seller_min_acceptable_quantity": 120,
+                "seller_min_acceptable_unit_price": 82.88
+              },
+              "seller_preferences": {
+                "target_delivery_deadline": "2026-05-28",
+                "target_quantity": 138,
+                "target_unit_price": 107.67
+              }
+            },
+            "stopped_reason": "max_rounds_reached",
+            "turn_history": [
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-20",
+                    "quantity": 120,
+                    "unit_price": 85.14
+                  },
+                  "proposal_id": "O1",
+                  "rationale": "This proposal meets all target specifications.",
+                  "target_offer_id": null
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 34218.974,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "PROPOSE accepted as valid proposal O1",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O1",
+                  "active_offer_ids": [
+                    "O1"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O1",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-25",
+                    "quantity": 130,
+                    "unit_price": 95.0
+                  },
+                  "proposal_id": "O2",
+                  "rationale": "I can meet your quantity and deadline, but I need a better price.",
+                  "target_offer_id": "O1"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 83924.484,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O2",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O2",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-22",
+                    "quantity": 125,
+                    "unit_price": 90.0
+                  },
+                  "proposal_id": "O3",
+                  "rationale": "I propose a counter-offer that balances the quantity and price while slightly adjusting the deadline.",
+                  "target_offer_id": "O2"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 75460.522,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O3",
+                "round_number": 2,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O3",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O3",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O3",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-23",
+                    "quantity": 128,
+                    "unit_price": 92.5
+                  },
+                  "proposal_id": "O4",
+                  "rationale": "I am adjusting the price and delivery date to meet the buyer's needs while maintaining profitability.",
+                  "target_offer_id": "O3"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 72166.479,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O4",
+                "round_number": 2,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O4",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O4",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O3",
+                    "seller": "O4"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-22",
+                    "quantity": 125,
+                    "unit_price": 90.0
+                  },
+                  "proposal_id": "O5",
+                  "rationale": "I am countering the last offer to meet my target price and quantity while slightly adjusting the deadline.",
+                  "target_offer_id": "O4"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 74966.355,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O5",
+                "round_number": 3,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O5",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O5",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O5",
+                    "seller": "O4"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-23",
+                    "quantity": 130,
+                    "unit_price": 92.0
+                  },
+                  "proposal_id": "O6",
+                  "rationale": "I am slightly adjusting my price and quantity to meet the buyer's expectations while staying within acceptable ranges.",
+                  "target_offer_id": "O5"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 79755.943,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O6",
+                "round_number": 3,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O6",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O6",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O5",
+                    "seller": "O6"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-22",
+                    "quantity": 125,
+                    "unit_price": 88.0
+                  },
+                  "proposal_id": "O7",
+                  "rationale": "I propose a counter-offer that balances the price and quantity while maintaining a reasonable delivery date.",
+                  "target_offer_id": "O6"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 89167.069,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O7",
+                "round_number": 4,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O7",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O7",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O7",
+                    "seller": "O6"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-23",
+                    "quantity": 132,
+                    "unit_price": 91.5
+                  },
+                  "proposal_id": "O8",
+                  "rationale": "I am slightly increasing the quantity and adjusting the price and deadline to meet the buyer's needs.",
+                  "target_offer_id": "O7"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 76301.359,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O8",
+                "round_number": 4,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O8",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O8",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O7",
+                    "seller": "O8"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-22",
+                    "quantity": 120,
+                    "unit_price": 87.0
+                  },
+                  "proposal_id": "O9",
+                  "rationale": "I am countering with a lower price and quantity while maintaining a reasonable delivery deadline.",
+                  "target_offer_id": "O8"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 83341.551,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O9",
+                "round_number": 5,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O9",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O9",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O9",
+                    "seller": "O8"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-23",
+                    "quantity": 130,
+                    "unit_price": 90.0
+                  },
+                  "proposal_id": "O10",
+                  "rationale": "I am countering with a price and quantity close to the previous offers while maintaining a reasonable delivery deadline.",
+                  "target_offer_id": "O9"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 112636.278,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O10",
+                "round_number": 5,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O10",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O10",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O9",
+                    "seller": "O10"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-22",
+                    "quantity": 125,
+                    "unit_price": 86.0
+                  },
+                  "proposal_id": "O11",
+                  "rationale": "I am making a counteroffer that balances the previous proposals.",
+                  "target_offer_id": "O10"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 87134.761,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O11",
+                "round_number": 6,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O11",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O11",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O11",
+                    "seller": "O10"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-23",
+                    "quantity": 135,
+                    "unit_price": 92.0
+                  },
+                  "proposal_id": "O12",
+                  "rationale": "I am proposing a slight increase in price and quantity while maintaining the delivery deadline.",
+                  "target_offer_id": null
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 92203.733,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "PROPOSE accepted as valid proposal O12",
+                "round_number": 6,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O12",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O12",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O11",
+                    "seller": "O12"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-22",
+                    "quantity": 125,
+                    "unit_price": 86.0
+                  },
+                  "proposal_id": "O13",
+                  "rationale": "I am countering with a slightly lower price and a more favorable delivery date.",
+                  "target_offer_id": "O12"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 78715.711,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O13",
+                "round_number": 7,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O13",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O13",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O13",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O13",
+                    "seller": "O12"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-23",
+                    "quantity": 135,
+                    "unit_price": 95.0
+                  },
+                  "proposal_id": "O14",
+                  "rationale": "I am proposing a price and quantity that is closer to the buyer's last offer while maintaining a reasonable margin.",
+                  "target_offer_id": null
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 79670.22,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "PROPOSE accepted as valid proposal O14",
+                "round_number": 7,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O14",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O13",
+                    "O14",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O14",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O13",
+                    "seller": "O14"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-22",
+                    "quantity": 125,
+                    "unit_price": 88.0
+                  },
+                  "proposal_id": "O15",
+                  "rationale": "I am countering the last offer by adjusting the unit price and keeping the quantity and deadline close to my previous counter-offer.",
+                  "target_offer_id": "O14"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 88780.535,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "COUNTER accepted as valid proposal O15",
+                "round_number": 8,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O15",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O13",
+                    "O14",
+                    "O15",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O15",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O15",
+                    "seller": "O14"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-23",
+                    "quantity": 135,
+                    "unit_price": 93.0
+                  },
+                  "proposal_id": "O16",
+                  "rationale": "I will slightly adjust my price and keep the quantity and deadline consistent with the previous round.",
+                  "target_offer_id": null
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 81632.83,
+                "provider_model_name": "gemma4:latest",
+                "result_summary": "PROPOSE accepted as valid proposal O16",
+                "round_number": 8,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O16",
+                  "active_offer_ids": [
+                    "O1",
+                    "O10",
+                    "O11",
+                    "O12",
+                    "O13",
+                    "O14",
+                    "O15",
+                    "O16",
+                    "O2",
+                    "O3",
+                    "O4",
+                    "O5",
+                    "O6",
+                    "O7",
+                    "O8",
+                    "O9"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O16",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O15",
+                    "seller": "O16"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              }
+            ]
+          }
+        }
+      ],
+      "summary": {
+        "agreement_rate": 0.0,
+        "average_balance_gap": 0.0,
+        "average_buyer_utility": 0.0,
+        "average_provider_latency_ms": 79252.276,
+        "average_rounds": 8.0,
+        "average_seller_utility": 0.0,
+        "feasible_agreement_rate": 0.0,
+        "invalid_output_rate": 0.0,
+        "max_rounds_rate": 1.0,
+        "model_name": "gemma4:latest",
+        "provider_kind": "ollama",
+        "total_runs": 3,
+        "walk_away_rate": 0.0
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "buyer_guardrails": {
+        "buyer_latest_acceptable_deadline": "2026-05-27",
+        "buyer_max_acceptable_unit_price": 108.03,
+        "buyer_min_acceptable_quantity": 116
+      },
+      "buyer_preferences": {
+        "target_delivery_deadline": "2026-05-24",
+        "target_quantity": 116,
+        "target_unit_price": 87.89
+      },
+      "constraints": {
+        "earliest_delivery_deadline": "2026-05-11",
+        "latest_delivery_deadline": "2026-06-09",
+        "max_quantity": 183,
+        "max_unit_price": 116.61,
+        "min_quantity": 48,
+        "min_unit_price": 78.31
+      },
+      "description": "Controlled simulated supply negotiation scenario.",
+      "scenario_id": "simulated-supply-001",
+      "seller_guardrails": {
+        "seller_earliest_acceptable_deadline": "2026-05-22",
+        "seller_min_acceptable_quantity": 116,
+        "seller_min_acceptable_unit_price": 85.97
+      },
+      "seller_preferences": {
+        "target_delivery_deadline": "2026-05-30",
+        "target_quantity": 129,
+        "target_unit_price": 107.03
+      }
+    },
+    {
+      "buyer_guardrails": {
+        "buyer_latest_acceptable_deadline": "2026-05-27",
+        "buyer_max_acceptable_unit_price": 107.97,
+        "buyer_min_acceptable_quantity": 104
+      },
+      "buyer_preferences": {
+        "target_delivery_deadline": "2026-05-24",
+        "target_quantity": 104,
+        "target_unit_price": 87.78
+      },
+      "constraints": {
+        "earliest_delivery_deadline": "2026-05-11",
+        "latest_delivery_deadline": "2026-06-05",
+        "max_quantity": 175,
+        "max_unit_price": 116.56,
+        "min_quantity": 42,
+        "min_unit_price": 78.18
+      },
+      "description": "Controlled simulated supply negotiation scenario.",
+      "scenario_id": "simulated-supply-002",
+      "seller_guardrails": {
+        "seller_earliest_acceptable_deadline": "2026-05-22",
+        "seller_min_acceptable_quantity": 104,
+        "seller_min_acceptable_unit_price": 85.86
+      },
+      "seller_preferences": {
+        "target_delivery_deadline": "2026-06-04",
+        "target_quantity": 120,
+        "target_unit_price": 106.97
+      }
+    },
+    {
+      "buyer_guardrails": {
+        "buyer_latest_acceptable_deadline": "2026-05-23",
+        "buyer_max_acceptable_unit_price": 108.67,
+        "buyer_min_acceptable_quantity": 120
+      },
+      "buyer_preferences": {
+        "target_delivery_deadline": "2026-05-20",
+        "target_quantity": 120,
+        "target_unit_price": 85.14
+      },
+      "constraints": {
+        "earliest_delivery_deadline": "2026-05-11",
+        "latest_delivery_deadline": "2026-06-18",
+        "max_quantity": 185,
+        "max_unit_price": 118.94,
+        "min_quantity": 65,
+        "min_unit_price": 73.87
+      },
+      "description": "Controlled simulated supply negotiation scenario.",
+      "scenario_id": "simulated-supply-003",
+      "seller_guardrails": {
+        "seller_earliest_acceptable_deadline": "2026-05-18",
+        "seller_min_acceptable_quantity": 120,
+        "seller_min_acceptable_unit_price": 82.88
+      },
+      "seller_preferences": {
+        "target_delivery_deadline": "2026-05-28",
+        "target_quantity": 138,
+        "target_unit_price": 107.67
+      }
+    }
+  ]
+}

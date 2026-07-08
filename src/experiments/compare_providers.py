@@ -55,6 +55,7 @@ class ProviderComparisonSummary:
     average_seller_utility: float
     average_balance_gap: float
     average_provider_latency_ms: float | None
+    mediated_agreement_rate: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -133,7 +134,7 @@ def build_comparison_summary(
         turn.provider_latency_ms
         for run in batch_result.runs
         for turn in run.result.turn_log
-        if turn.provider_latency_ms is not None
+        if turn.provider_latency_ms is not None and turn.agent_role in ("buyer", "seller")
     ]
 
     return ProviderComparisonSummary(
@@ -152,6 +153,7 @@ def build_comparison_summary(
         average_provider_latency_ms=round(sum(latencies) / len(latencies), 3)
         if latencies
         else None,
+        mediated_agreement_rate=batch_result.summary.mediated_agreement_rate,
     )
 
 

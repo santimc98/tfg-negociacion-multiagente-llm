@@ -1,0 +1,51 @@
+%% Arquitectura modular del prototipo de negociacion multiagente
+graph TD
+    subgraph UI["Interfaz web (src/web)"]
+        FE["Frontend SPA<br/>(index.html / app.js)"]
+        API["FastAPI + SSE<br/>(app.py)"]
+    end
+
+    subgraph CORE["Nucleo de negociacion (src/negotiation)"]
+        ENG["engine<br/>(motor por turnos)"]
+        VAL["validator<br/>(autoridad de reglas)"]
+        MED["mediator<br/>(juez / mediador)"]
+        MET["metrics<br/>(utilidades y viabilidad)"]
+        EXP["exporter<br/>(JSON estructurado)"]
+        MOD["models<br/>(dominio)"]
+    end
+
+    subgraph LLM["Proveedores de acciones (src/llm)"]
+        PMOCK["mock<br/>(baseline determinista)"]
+        POLL["ollama<br/>(LLM local)"]
+        POR["openrouter<br/>(LLM en la nube)"]
+        PARSE["action_parser<br/>(frontera texto-dominio)"]
+        PROMPT["negotiation_prompt<br/>(prompt compartido)"]
+    end
+
+    subgraph EXPER["Experimentos y escenarios"]
+        GEN["scenarios.generator"]
+        BATCH["scenarios.batch"]
+        CMP["experiments.full_comparison"]
+    end
+
+    FE -->|configura y observa| API
+    API -->|ejecuta| ENG
+    ENG -->|solicita accion| PMOCK
+    ENG -->|solicita accion| POLL
+    ENG -->|solicita accion| POR
+    POLL --> PARSE
+    POR --> PARSE
+    POLL --> PROMPT
+    POR --> PROMPT
+    PARSE --> MOD
+    ENG -->|valida| VAL
+    ENG -->|consulta compromiso| MED
+    MED --> VAL
+    ENG --> MET
+    ENG --> EXP
+    VAL --> MOD
+    MET --> MOD
+    GEN --> BATCH
+    BATCH --> ENG
+    CMP --> BATCH
+    CMP --> POR

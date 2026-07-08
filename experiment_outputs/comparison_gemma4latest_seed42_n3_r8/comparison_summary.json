@@ -1,0 +1,157 @@
+{
+  "comparison_config": {
+    "max_rounds": 8,
+    "scenario_count": 3,
+    "seed": 42
+  },
+  "provider_results": [
+    {
+      "provider_config": {
+        "history_limit": null,
+        "model_name": null,
+        "provider_kind": "mock",
+        "temperature": null,
+        "timeout_seconds": null
+      },
+      "runs": [],
+      "summary": {
+        "agreement_rate": 1.0,
+        "average_balance_gap": 0.1419,
+        "average_buyer_utility": 0.5754,
+        "average_provider_latency_ms": 0.004,
+        "average_rounds": 2.0,
+        "average_seller_utility": 0.7172,
+        "feasible_agreement_rate": 1.0,
+        "invalid_output_rate": 0.0,
+        "max_rounds_rate": 0.0,
+        "model_name": null,
+        "provider_kind": "mock",
+        "total_runs": 3,
+        "walk_away_rate": 0.0
+      }
+    },
+    {
+      "provider_config": {
+        "history_limit": 4,
+        "model_name": "gemma4:latest",
+        "provider_kind": "ollama",
+        "temperature": 0.1,
+        "timeout_seconds": 180.0
+      },
+      "runs": [],
+      "summary": {
+        "agreement_rate": 0.0,
+        "average_balance_gap": 0.0,
+        "average_buyer_utility": 0.0,
+        "average_provider_latency_ms": 79252.276,
+        "average_rounds": 8.0,
+        "average_seller_utility": 0.0,
+        "feasible_agreement_rate": 0.0,
+        "invalid_output_rate": 0.0,
+        "max_rounds_rate": 1.0,
+        "model_name": "gemma4:latest",
+        "provider_kind": "ollama",
+        "total_runs": 3,
+        "walk_away_rate": 0.0
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "buyer_guardrails": {
+        "buyer_latest_acceptable_deadline": "2026-05-27",
+        "buyer_max_acceptable_unit_price": 108.03,
+        "buyer_min_acceptable_quantity": 116
+      },
+      "buyer_preferences": {
+        "target_delivery_deadline": "2026-05-24",
+        "target_quantity": 116,
+        "target_unit_price": 87.89
+      },
+      "constraints": {
+        "earliest_delivery_deadline": "2026-05-11",
+        "latest_delivery_deadline": "2026-06-09",
+        "max_quantity": 183,
+        "max_unit_price": 116.61,
+        "min_quantity": 48,
+        "min_unit_price": 78.31
+      },
+      "description": "Controlled simulated supply negotiation scenario.",
+      "scenario_id": "simulated-supply-001",
+      "seller_guardrails": {
+        "seller_earliest_acceptable_deadline": "2026-05-22",
+        "seller_min_acceptable_quantity": 116,
+        "seller_min_acceptable_unit_price": 85.97
+      },
+      "seller_preferences": {
+        "target_delivery_deadline": "2026-05-30",
+        "target_quantity": 129,
+        "target_unit_price": 107.03
+      }
+    },
+    {
+      "buyer_guardrails": {
+        "buyer_latest_acceptable_deadline": "2026-05-27",
+        "buyer_max_acceptable_unit_price": 107.97,
+        "buyer_min_acceptable_quantity": 104
+      },
+      "buyer_preferences": {
+        "target_delivery_deadline": "2026-05-24",
+        "target_quantity": 104,
+        "target_unit_price": 87.78
+      },
+      "constraints": {
+        "earliest_delivery_deadline": "2026-05-11",
+        "latest_delivery_deadline": "2026-06-05",
+        "max_quantity": 175,
+        "max_unit_price": 116.56,
+        "min_quantity": 42,
+        "min_unit_price": 78.18
+      },
+      "description": "Controlled simulated supply negotiation scenario.",
+      "scenario_id": "simulated-supply-002",
+      "seller_guardrails": {
+        "seller_earliest_acceptable_deadline": "2026-05-22",
+        "seller_min_acceptable_quantity": 104,
+        "seller_min_acceptable_unit_price": 85.86
+      },
+      "seller_preferences": {
+        "target_delivery_deadline": "2026-06-04",
+        "target_quantity": 120,
+        "target_unit_price": 106.97
+      }
+    },
+    {
+      "buyer_guardrails": {
+        "buyer_latest_acceptable_deadline": "2026-05-23",
+        "buyer_max_acceptable_unit_price": 108.67,
+        "buyer_min_acceptable_quantity": 120
+      },
+      "buyer_preferences": {
+        "target_delivery_deadline": "2026-05-20",
+        "target_quantity": 120,
+        "target_unit_price": 85.14
+      },
+      "constraints": {
+        "earliest_delivery_deadline": "2026-05-11",
+        "latest_delivery_deadline": "2026-06-18",
+        "max_quantity": 185,
+        "max_unit_price": 118.94,
+        "min_quantity": 65,
+        "min_unit_price": 73.87
+      },
+      "description": "Controlled simulated supply negotiation scenario.",
+      "scenario_id": "simulated-supply-003",
+      "seller_guardrails": {
+        "seller_earliest_acceptable_deadline": "2026-05-18",
+        "seller_min_acceptable_quantity": 120,
+        "seller_min_acceptable_unit_price": 82.88
+      },
+      "seller_preferences": {
+        "target_delivery_deadline": "2026-05-28",
+        "target_quantity": 138,
+        "target_unit_price": 107.67
+      }
+    }
+  ]
+}

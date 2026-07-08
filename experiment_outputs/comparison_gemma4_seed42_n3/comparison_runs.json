@@ -1,0 +1,1032 @@
+{
+  "comparison_config": {
+    "max_rounds": 5,
+    "scenario_count": 3,
+    "seed": 42
+  },
+  "provider_results": [
+    {
+      "provider_config": {
+        "history_limit": null,
+        "model_name": null,
+        "provider_kind": "mock",
+        "temperature": null,
+        "timeout_seconds": null
+      },
+      "runs": [
+        {
+          "metrics": {
+            "agreement_balance_gap": 0.1642,
+            "agreement_reached": true,
+            "buyer_utility": 0.5685,
+            "joint_utility": 1.3012,
+            "private_feasibility_buyer": true,
+            "private_feasibility_seller": true,
+            "rounds_used": 2,
+            "seller_utility": 0.7327,
+            "valid_agreement": true
+          },
+          "result": {
+            "agreement": {
+              "accepted_by": "buyer",
+              "accepted_offer_id": "O2",
+              "proposed_by": "seller",
+              "reached_at_round": 2,
+              "terms": {
+                "delivery_deadline": "2026-05-24",
+                "quantity": 129,
+                "unit_price": 107.03
+              }
+            },
+            "metrics": {
+              "agreement_balance_gap": 0.1642,
+              "agreement_reached": true,
+              "buyer_utility": 0.5685,
+              "joint_utility": 1.3012,
+              "private_feasibility_buyer": true,
+              "private_feasibility_seller": true,
+              "rounds_used": 2,
+              "seller_utility": 0.7327,
+              "valid_agreement": true
+            },
+            "providers": {
+              "buyer": {
+                "model_name": null,
+                "provider_kind": "mock"
+              },
+              "seller": {
+                "model_name": null,
+                "provider_kind": "mock"
+              }
+            },
+            "scenario": {
+              "buyer_guardrails": {
+                "buyer_latest_acceptable_deadline": "2026-05-27",
+                "buyer_max_acceptable_unit_price": 108.03,
+                "buyer_min_acceptable_quantity": 116
+              },
+              "buyer_preferences": {
+                "target_delivery_deadline": "2026-05-24",
+                "target_quantity": 116,
+                "target_unit_price": 87.89
+              },
+              "constraints": {
+                "earliest_delivery_deadline": "2026-05-11",
+                "latest_delivery_deadline": "2026-06-09",
+                "max_quantity": 183,
+                "max_unit_price": 116.61,
+                "min_quantity": 48,
+                "min_unit_price": 78.31
+              },
+              "description": "Controlled simulated supply negotiation scenario.",
+              "scenario_id": "simulated-supply-001",
+              "seller_guardrails": {
+                "seller_earliest_acceptable_deadline": "2026-05-22",
+                "seller_min_acceptable_quantity": 116,
+                "seller_min_acceptable_unit_price": 85.97
+              },
+              "seller_preferences": {
+                "target_delivery_deadline": "2026-05-30",
+                "target_quantity": 129,
+                "target_unit_price": 107.03
+              }
+            },
+            "stopped_reason": "agreement_reached",
+            "turn_history": [
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 116,
+                    "unit_price": 87.89
+                  },
+                  "proposal_id": "O1",
+                  "rationale": "Deterministic mock concession.",
+                  "target_offer_id": null
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.008,
+                "provider_model_name": null,
+                "result_summary": "PROPOSE accepted as valid proposal O1",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O1",
+                  "active_offer_ids": [
+                    "O1"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O1",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 129,
+                    "unit_price": 107.03
+                  },
+                  "proposal_id": "O2",
+                  "rationale": "Deterministic mock concession.",
+                  "target_offer_id": "O1"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.008,
+                "provider_model_name": null,
+                "result_summary": "COUNTER accepted as valid proposal O2",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O2",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "ACCEPT",
+                  "agent_role": "buyer",
+                  "offer_terms": null,
+                  "proposal_id": null,
+                  "rationale": "The seller proposal is acceptable for the simulated buyer.",
+                  "target_offer_id": "O2"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "agreement_reached",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.003,
+                "provider_model_name": null,
+                "result_summary": "ACCEPT closed negotiation with state agreement_reached",
+                "round_number": 2,
+                "state_after": {
+                  "accepted_offer_ids": [
+                    "O2"
+                  ],
+                  "active_offer_id": null,
+                  "active_offer_ids": [],
+                  "last_state_change_reason": "buyer accepted O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              }
+            ]
+          }
+        },
+        {
+          "metrics": {
+            "agreement_balance_gap": 0.2202,
+            "agreement_reached": true,
+            "buyer_utility": 0.5365,
+            "joint_utility": 1.2932,
+            "private_feasibility_buyer": true,
+            "private_feasibility_seller": true,
+            "rounds_used": 2,
+            "seller_utility": 0.7567,
+            "valid_agreement": true
+          },
+          "result": {
+            "agreement": {
+              "accepted_by": "buyer",
+              "accepted_offer_id": "O2",
+              "proposed_by": "seller",
+              "reached_at_round": 2,
+              "terms": {
+                "delivery_deadline": "2026-05-24",
+                "quantity": 120,
+                "unit_price": 106.97
+              }
+            },
+            "metrics": {
+              "agreement_balance_gap": 0.2202,
+              "agreement_reached": true,
+              "buyer_utility": 0.5365,
+              "joint_utility": 1.2932,
+              "private_feasibility_buyer": true,
+              "private_feasibility_seller": true,
+              "rounds_used": 2,
+              "seller_utility": 0.7567,
+              "valid_agreement": true
+            },
+            "providers": {
+              "buyer": {
+                "model_name": null,
+                "provider_kind": "mock"
+              },
+              "seller": {
+                "model_name": null,
+                "provider_kind": "mock"
+              }
+            },
+            "scenario": {
+              "buyer_guardrails": {
+                "buyer_latest_acceptable_deadline": "2026-05-27",
+                "buyer_max_acceptable_unit_price": 107.97,
+                "buyer_min_acceptable_quantity": 104
+              },
+              "buyer_preferences": {
+                "target_delivery_deadline": "2026-05-24",
+                "target_quantity": 104,
+                "target_unit_price": 87.78
+              },
+              "constraints": {
+                "earliest_delivery_deadline": "2026-05-11",
+                "latest_delivery_deadline": "2026-06-05",
+                "max_quantity": 175,
+                "max_unit_price": 116.56,
+                "min_quantity": 42,
+                "min_unit_price": 78.18
+              },
+              "description": "Controlled simulated supply negotiation scenario.",
+              "scenario_id": "simulated-supply-002",
+              "seller_guardrails": {
+                "seller_earliest_acceptable_deadline": "2026-05-22",
+                "seller_min_acceptable_quantity": 104,
+                "seller_min_acceptable_unit_price": 85.86
+              },
+              "seller_preferences": {
+                "target_delivery_deadline": "2026-06-04",
+                "target_quantity": 120,
+                "target_unit_price": 106.97
+              }
+            },
+            "stopped_reason": "agreement_reached",
+            "turn_history": [
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 104,
+                    "unit_price": 87.78
+                  },
+                  "proposal_id": "O1",
+                  "rationale": "Deterministic mock concession.",
+                  "target_offer_id": null
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.004,
+                "provider_model_name": null,
+                "result_summary": "PROPOSE accepted as valid proposal O1",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O1",
+                  "active_offer_ids": [
+                    "O1"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O1",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-24",
+                    "quantity": 120,
+                    "unit_price": 106.97
+                  },
+                  "proposal_id": "O2",
+                  "rationale": "Deterministic mock concession.",
+                  "target_offer_id": "O1"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.004,
+                "provider_model_name": null,
+                "result_summary": "COUNTER accepted as valid proposal O2",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O2",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "ACCEPT",
+                  "agent_role": "buyer",
+                  "offer_terms": null,
+                  "proposal_id": null,
+                  "rationale": "The seller proposal is acceptable for the simulated buyer.",
+                  "target_offer_id": "O2"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "agreement_reached",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.002,
+                "provider_model_name": null,
+                "result_summary": "ACCEPT closed negotiation with state agreement_reached",
+                "round_number": 2,
+                "state_after": {
+                  "accepted_offer_ids": [
+                    "O2"
+                  ],
+                  "active_offer_id": null,
+                  "active_offer_ids": [],
+                  "last_state_change_reason": "buyer accepted O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              }
+            ]
+          }
+        },
+        {
+          "metrics": {
+            "agreement_balance_gap": 0.0412,
+            "agreement_reached": true,
+            "buyer_utility": 0.6211,
+            "joint_utility": 1.2834,
+            "private_feasibility_buyer": true,
+            "private_feasibility_seller": true,
+            "rounds_used": 2,
+            "seller_utility": 0.6623,
+            "valid_agreement": true
+          },
+          "result": {
+            "agreement": {
+              "accepted_by": "buyer",
+              "accepted_offer_id": "O2",
+              "proposed_by": "seller",
+              "reached_at_round": 2,
+              "terms": {
+                "delivery_deadline": "2026-05-20",
+                "quantity": 138,
+                "unit_price": 107.67
+              }
+            },
+            "metrics": {
+              "agreement_balance_gap": 0.0412,
+              "agreement_reached": true,
+              "buyer_utility": 0.6211,
+              "joint_utility": 1.2834,
+              "private_feasibility_buyer": true,
+              "private_feasibility_seller": true,
+              "rounds_used": 2,
+              "seller_utility": 0.6623,
+              "valid_agreement": true
+            },
+            "providers": {
+              "buyer": {
+                "model_name": null,
+                "provider_kind": "mock"
+              },
+              "seller": {
+                "model_name": null,
+                "provider_kind": "mock"
+              }
+            },
+            "scenario": {
+              "buyer_guardrails": {
+                "buyer_latest_acceptable_deadline": "2026-05-23",
+                "buyer_max_acceptable_unit_price": 108.67,
+                "buyer_min_acceptable_quantity": 120
+              },
+              "buyer_preferences": {
+                "target_delivery_deadline": "2026-05-20",
+                "target_quantity": 120,
+                "target_unit_price": 85.14
+              },
+              "constraints": {
+                "earliest_delivery_deadline": "2026-05-11",
+                "latest_delivery_deadline": "2026-06-18",
+                "max_quantity": 185,
+                "max_unit_price": 118.94,
+                "min_quantity": 65,
+                "min_unit_price": 73.87
+              },
+              "description": "Controlled simulated supply negotiation scenario.",
+              "scenario_id": "simulated-supply-003",
+              "seller_guardrails": {
+                "seller_earliest_acceptable_deadline": "2026-05-18",
+                "seller_min_acceptable_quantity": 120,
+                "seller_min_acceptable_unit_price": 82.88
+              },
+              "seller_preferences": {
+                "target_delivery_deadline": "2026-05-28",
+                "target_quantity": 138,
+                "target_unit_price": 107.67
+              }
+            },
+            "stopped_reason": "agreement_reached",
+            "turn_history": [
+              {
+                "action": {
+                  "action_type": "PROPOSE",
+                  "agent_role": "buyer",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-20",
+                    "quantity": 120,
+                    "unit_price": 85.14
+                  },
+                  "proposal_id": "O1",
+                  "rationale": "Deterministic mock concession.",
+                  "target_offer_id": null
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.003,
+                "provider_model_name": null,
+                "result_summary": "PROPOSE accepted as valid proposal O1",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O1",
+                  "active_offer_ids": [
+                    "O1"
+                  ],
+                  "last_state_change_reason": "PROPOSE registered as O1",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              },
+              {
+                "action": {
+                  "action_type": "COUNTER",
+                  "agent_role": "seller",
+                  "offer_terms": {
+                    "delivery_deadline": "2026-05-20",
+                    "quantity": 138,
+                    "unit_price": 107.67
+                  },
+                  "proposal_id": "O2",
+                  "rationale": "Deterministic mock concession.",
+                  "target_offer_id": "O1"
+                },
+                "agent_role": "seller",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "running",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.003,
+                "provider_model_name": null,
+                "result_summary": "COUNTER accepted as valid proposal O2",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": "O2",
+                  "active_offer_ids": [
+                    "O1",
+                    "O2"
+                  ],
+                  "last_state_change_reason": "COUNTER registered as O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              },
+              {
+                "action": {
+                  "action_type": "ACCEPT",
+                  "agent_role": "buyer",
+                  "offer_terms": null,
+                  "proposal_id": null,
+                  "rationale": "The seller proposal is acceptable for the simulated buyer.",
+                  "target_offer_id": "O2"
+                },
+                "agent_role": "buyer",
+                "errors": [],
+                "is_valid": true,
+                "negotiation_state": "agreement_reached",
+                "provider_kind": "mock",
+                "provider_latency_ms": 0.001,
+                "provider_model_name": null,
+                "result_summary": "ACCEPT closed negotiation with state agreement_reached",
+                "round_number": 2,
+                "state_after": {
+                  "accepted_offer_ids": [
+                    "O2"
+                  ],
+                  "active_offer_id": null,
+                  "active_offer_ids": [],
+                  "last_state_change_reason": "buyer accepted O2",
+                  "latest_valid_proposal_by_agent": {
+                    "buyer": "O1",
+                    "seller": "O2"
+                  },
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": true
+              }
+            ]
+          }
+        }
+      ],
+      "summary": {
+        "agreement_rate": 1.0,
+        "average_balance_gap": 0.1419,
+        "average_buyer_utility": 0.5754,
+        "average_provider_latency_ms": 0.004,
+        "average_rounds": 2.0,
+        "average_seller_utility": 0.7172,
+        "feasible_agreement_rate": 1.0,
+        "invalid_output_rate": 0.0,
+        "max_rounds_rate": 0.0,
+        "model_name": null,
+        "provider_kind": "mock",
+        "total_runs": 3,
+        "walk_away_rate": 0.0
+      }
+    },
+    {
+      "provider_config": {
+        "history_limit": 4,
+        "model_name": "gemma4:26b",
+        "provider_kind": "ollama",
+        "temperature": 0.1,
+        "timeout_seconds": 180.0
+      },
+      "runs": [
+        {
+          "metrics": {
+            "agreement_balance_gap": 0.0,
+            "agreement_reached": false,
+            "buyer_utility": 0.0,
+            "joint_utility": 0.0,
+            "private_feasibility_buyer": false,
+            "private_feasibility_seller": false,
+            "rounds_used": 1,
+            "seller_utility": 0.0,
+            "valid_agreement": false
+          },
+          "result": {
+            "agreement": null,
+            "metrics": {
+              "agreement_balance_gap": 0.0,
+              "agreement_reached": false,
+              "buyer_utility": 0.0,
+              "joint_utility": 0.0,
+              "private_feasibility_buyer": false,
+              "private_feasibility_seller": false,
+              "rounds_used": 1,
+              "seller_utility": 0.0,
+              "valid_agreement": false
+            },
+            "providers": {
+              "buyer": {
+                "model_name": "gemma4:26b",
+                "provider_kind": "ollama"
+              },
+              "seller": {
+                "model_name": "gemma4:26b",
+                "provider_kind": "ollama"
+              }
+            },
+            "scenario": {
+              "buyer_guardrails": {
+                "buyer_latest_acceptable_deadline": "2026-05-27",
+                "buyer_max_acceptable_unit_price": 108.03,
+                "buyer_min_acceptable_quantity": 116
+              },
+              "buyer_preferences": {
+                "target_delivery_deadline": "2026-05-24",
+                "target_quantity": 116,
+                "target_unit_price": 87.89
+              },
+              "constraints": {
+                "earliest_delivery_deadline": "2026-05-11",
+                "latest_delivery_deadline": "2026-06-09",
+                "max_quantity": 183,
+                "max_unit_price": 116.61,
+                "min_quantity": 48,
+                "min_unit_price": 78.31
+              },
+              "description": "Controlled simulated supply negotiation scenario.",
+              "scenario_id": "simulated-supply-001",
+              "seller_guardrails": {
+                "seller_earliest_acceptable_deadline": "2026-05-22",
+                "seller_min_acceptable_quantity": 116,
+                "seller_min_acceptable_unit_price": 85.97
+              },
+              "seller_preferences": {
+                "target_delivery_deadline": "2026-05-30",
+                "target_quantity": 129,
+                "target_unit_price": 107.03
+              }
+            },
+            "stopped_reason": "invalid_provider_output",
+            "turn_history": [
+              {
+                "action": {
+                  "action_type": "INVALID_LLM_OUTPUT",
+                  "agent_role": "buyer",
+                  "offer_terms": null,
+                  "proposal_id": null,
+                  "rationale": "Invalid Ollama provider output: Ollama request failed: HTTP Error 404: Not Found",
+                  "target_offer_id": null
+                },
+                "agent_role": "buyer",
+                "errors": [
+                  "action_type must be a NegotiationActionType"
+                ],
+                "is_valid": false,
+                "negotiation_state": "invalid_provider_output",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 2093.291,
+                "provider_model_name": "gemma4:26b",
+                "result_summary": "INVALID_LLM_OUTPUT invalid: action_type must be a NegotiationActionType",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": null,
+                  "active_offer_ids": [],
+                  "last_state_change_reason": "invalid provider output",
+                  "latest_valid_proposal_by_agent": {},
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              }
+            ]
+          }
+        },
+        {
+          "metrics": {
+            "agreement_balance_gap": 0.0,
+            "agreement_reached": false,
+            "buyer_utility": 0.0,
+            "joint_utility": 0.0,
+            "private_feasibility_buyer": false,
+            "private_feasibility_seller": false,
+            "rounds_used": 1,
+            "seller_utility": 0.0,
+            "valid_agreement": false
+          },
+          "result": {
+            "agreement": null,
+            "metrics": {
+              "agreement_balance_gap": 0.0,
+              "agreement_reached": false,
+              "buyer_utility": 0.0,
+              "joint_utility": 0.0,
+              "private_feasibility_buyer": false,
+              "private_feasibility_seller": false,
+              "rounds_used": 1,
+              "seller_utility": 0.0,
+              "valid_agreement": false
+            },
+            "providers": {
+              "buyer": {
+                "model_name": "gemma4:26b",
+                "provider_kind": "ollama"
+              },
+              "seller": {
+                "model_name": "gemma4:26b",
+                "provider_kind": "ollama"
+              }
+            },
+            "scenario": {
+              "buyer_guardrails": {
+                "buyer_latest_acceptable_deadline": "2026-05-27",
+                "buyer_max_acceptable_unit_price": 107.97,
+                "buyer_min_acceptable_quantity": 104
+              },
+              "buyer_preferences": {
+                "target_delivery_deadline": "2026-05-24",
+                "target_quantity": 104,
+                "target_unit_price": 87.78
+              },
+              "constraints": {
+                "earliest_delivery_deadline": "2026-05-11",
+                "latest_delivery_deadline": "2026-06-05",
+                "max_quantity": 175,
+                "max_unit_price": 116.56,
+                "min_quantity": 42,
+                "min_unit_price": 78.18
+              },
+              "description": "Controlled simulated supply negotiation scenario.",
+              "scenario_id": "simulated-supply-002",
+              "seller_guardrails": {
+                "seller_earliest_acceptable_deadline": "2026-05-22",
+                "seller_min_acceptable_quantity": 104,
+                "seller_min_acceptable_unit_price": 85.86
+              },
+              "seller_preferences": {
+                "target_delivery_deadline": "2026-06-04",
+                "target_quantity": 120,
+                "target_unit_price": 106.97
+              }
+            },
+            "stopped_reason": "invalid_provider_output",
+            "turn_history": [
+              {
+                "action": {
+                  "action_type": "INVALID_LLM_OUTPUT",
+                  "agent_role": "buyer",
+                  "offer_terms": null,
+                  "proposal_id": null,
+                  "rationale": "Invalid Ollama provider output: Ollama request failed: HTTP Error 404: Not Found",
+                  "target_offer_id": null
+                },
+                "agent_role": "buyer",
+                "errors": [
+                  "action_type must be a NegotiationActionType"
+                ],
+                "is_valid": false,
+                "negotiation_state": "invalid_provider_output",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 2048.441,
+                "provider_model_name": "gemma4:26b",
+                "result_summary": "INVALID_LLM_OUTPUT invalid: action_type must be a NegotiationActionType",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": null,
+                  "active_offer_ids": [],
+                  "last_state_change_reason": "invalid provider output",
+                  "latest_valid_proposal_by_agent": {},
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              }
+            ]
+          }
+        },
+        {
+          "metrics": {
+            "agreement_balance_gap": 0.0,
+            "agreement_reached": false,
+            "buyer_utility": 0.0,
+            "joint_utility": 0.0,
+            "private_feasibility_buyer": false,
+            "private_feasibility_seller": false,
+            "rounds_used": 1,
+            "seller_utility": 0.0,
+            "valid_agreement": false
+          },
+          "result": {
+            "agreement": null,
+            "metrics": {
+              "agreement_balance_gap": 0.0,
+              "agreement_reached": false,
+              "buyer_utility": 0.0,
+              "joint_utility": 0.0,
+              "private_feasibility_buyer": false,
+              "private_feasibility_seller": false,
+              "rounds_used": 1,
+              "seller_utility": 0.0,
+              "valid_agreement": false
+            },
+            "providers": {
+              "buyer": {
+                "model_name": "gemma4:26b",
+                "provider_kind": "ollama"
+              },
+              "seller": {
+                "model_name": "gemma4:26b",
+                "provider_kind": "ollama"
+              }
+            },
+            "scenario": {
+              "buyer_guardrails": {
+                "buyer_latest_acceptable_deadline": "2026-05-23",
+                "buyer_max_acceptable_unit_price": 108.67,
+                "buyer_min_acceptable_quantity": 120
+              },
+              "buyer_preferences": {
+                "target_delivery_deadline": "2026-05-20",
+                "target_quantity": 120,
+                "target_unit_price": 85.14
+              },
+              "constraints": {
+                "earliest_delivery_deadline": "2026-05-11",
+                "latest_delivery_deadline": "2026-06-18",
+                "max_quantity": 185,
+                "max_unit_price": 118.94,
+                "min_quantity": 65,
+                "min_unit_price": 73.87
+              },
+              "description": "Controlled simulated supply negotiation scenario.",
+              "scenario_id": "simulated-supply-003",
+              "seller_guardrails": {
+                "seller_earliest_acceptable_deadline": "2026-05-18",
+                "seller_min_acceptable_quantity": 120,
+                "seller_min_acceptable_unit_price": 82.88
+              },
+              "seller_preferences": {
+                "target_delivery_deadline": "2026-05-28",
+                "target_quantity": 138,
+                "target_unit_price": 107.67
+              }
+            },
+            "stopped_reason": "invalid_provider_output",
+            "turn_history": [
+              {
+                "action": {
+                  "action_type": "INVALID_LLM_OUTPUT",
+                  "agent_role": "buyer",
+                  "offer_terms": null,
+                  "proposal_id": null,
+                  "rationale": "Invalid Ollama provider output: Ollama request failed: HTTP Error 404: Not Found",
+                  "target_offer_id": null
+                },
+                "agent_role": "buyer",
+                "errors": [
+                  "action_type must be a NegotiationActionType"
+                ],
+                "is_valid": false,
+                "negotiation_state": "invalid_provider_output",
+                "provider_kind": "ollama",
+                "provider_latency_ms": 2062.471,
+                "provider_model_name": "gemma4:26b",
+                "result_summary": "INVALID_LLM_OUTPUT invalid: action_type must be a NegotiationActionType",
+                "round_number": 1,
+                "state_after": {
+                  "accepted_offer_ids": [],
+                  "active_offer_id": null,
+                  "active_offer_ids": [],
+                  "last_state_change_reason": "invalid provider output",
+                  "latest_valid_proposal_by_agent": {},
+                  "rejected_offer_ids": []
+                },
+                "target_offer_id_resolved": null
+              }
+            ]
+          }
+        }
+      ],
+      "summary": {
+        "agreement_rate": 0.0,
+        "average_balance_gap": 0.0,
+        "average_buyer_utility": 0.0,
+        "average_provider_latency_ms": 2068.068,
+        "average_rounds": 1.0,
+        "average_seller_utility": 0.0,
+        "feasible_agreement_rate": 0.0,
+        "invalid_output_rate": 1.0,
+        "max_rounds_rate": 0.0,
+        "model_name": "gemma4:26b",
+        "provider_kind": "ollama",
+        "total_runs": 3,
+        "walk_away_rate": 0.0
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "buyer_guardrails": {
+        "buyer_latest_acceptable_deadline": "2026-05-27",
+        "buyer_max_acceptable_unit_price": 108.03,
+        "buyer_min_acceptable_quantity": 116
+      },
+      "buyer_preferences": {
+        "target_delivery_deadline": "2026-05-24",
+        "target_quantity": 116,
+        "target_unit_price": 87.89
+      },
+      "constraints": {
+        "earliest_delivery_deadline": "2026-05-11",
+        "latest_delivery_deadline": "2026-06-09",
+        "max_quantity": 183,
+        "max_unit_price": 116.61,
+        "min_quantity": 48,
+        "min_unit_price": 78.31
+      },
+      "description": "Controlled simulated supply negotiation scenario.",
+      "scenario_id": "simulated-supply-001",
+      "seller_guardrails": {
+        "seller_earliest_acceptable_deadline": "2026-05-22",
+        "seller_min_acceptable_quantity": 116,
+        "seller_min_acceptable_unit_price": 85.97
+      },
+      "seller_preferences": {
+        "target_delivery_deadline": "2026-05-30",
+        "target_quantity": 129,
+        "target_unit_price": 107.03
+      }
+    },
+    {
+      "buyer_guardrails": {
+        "buyer_latest_acceptable_deadline": "2026-05-27",
+        "buyer_max_acceptable_unit_price": 107.97,
+        "buyer_min_acceptable_quantity": 104
+      },
+      "buyer_preferences": {
+        "target_delivery_deadline": "2026-05-24",
+        "target_quantity": 104,
+        "target_unit_price": 87.78
+      },
+      "constraints": {
+        "earliest_delivery_deadline": "2026-05-11",
+        "latest_delivery_deadline": "2026-06-05",
+        "max_quantity": 175,
+        "max_unit_price": 116.56,
+        "min_quantity": 42,
+        "min_unit_price": 78.18
+      },
+      "description": "Controlled simulated supply negotiation scenario.",
+      "scenario_id": "simulated-supply-002",
+      "seller_guardrails": {
+        "seller_earliest_acceptable_deadline": "2026-05-22",
+        "seller_min_acceptable_quantity": 104,
+        "seller_min_acceptable_unit_price": 85.86
+      },
+      "seller_preferences": {
+        "target_delivery_deadline": "2026-06-04",
+        "target_quantity": 120,
+        "target_unit_price": 106.97
+      }
+    },
+    {
+      "buyer_guardrails": {
+        "buyer_latest_acceptable_deadline": "2026-05-23",
+        "buyer_max_acceptable_unit_price": 108.67,
+        "buyer_min_acceptable_quantity": 120
+      },
+      "buyer_preferences": {
+        "target_delivery_deadline": "2026-05-20",
+        "target_quantity": 120,
+        "target_unit_price": 85.14
+      },
+      "constraints": {
+        "earliest_delivery_deadline": "2026-05-11",
+        "latest_delivery_deadline": "2026-06-18",
+        "max_quantity": 185,
+        "max_unit_price": 118.94,
+        "min_quantity": 65,
+        "min_unit_price": 73.87
+      },
+      "description": "Controlled simulated supply negotiation scenario.",
+      "scenario_id": "simulated-supply-003",
+      "seller_guardrails": {
+        "seller_earliest_acceptable_deadline": "2026-05-18",
+        "seller_min_acceptable_quantity": 120,
+        "seller_min_acceptable_unit_price": 82.88
+      },
+      "seller_preferences": {
+        "target_delivery_deadline": "2026-05-28",
+        "target_quantity": 138,
+        "target_unit_price": 107.67
+      }
+    }
+  ]
+}

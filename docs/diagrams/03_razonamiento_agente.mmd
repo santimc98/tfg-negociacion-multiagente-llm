@@ -1,0 +1,29 @@
+%% Proceso de decision de un agente y control del motor
+flowchart TD
+    START(["Turno del agente"]) --> CTX["Recibe contexto:<br/>rangos publicos, objetivos y guardrails privados,<br/>historial reciente resumido"]
+    CTX --> DECIDE{"Hay una propuesta<br/>viva de la contraparte?"}
+
+    DECIDE -->|No| PROPOSE["PROPOSE<br/>(nueva oferta)"]
+    DECIDE -->|Si| EVAL{"La oferta cumple<br/>mis guardrails privados?"}
+
+    EVAL -->|Si, es buena| ACCEPT["ACCEPT<br/>(aceptar oferta)"]
+    EVAL -->|Parcialmente| COUNTER["COUNTER<br/>(contraoferta)"]
+    EVAL -->|No, inaceptable| REJECT["REJECT<br/>(rechazo especifico)"]
+    EVAL -->|Sin margen| WALK["WALK_AWAY<br/>(abandono)"]
+
+    PROPOSE --> GATE
+    COUNTER --> GATE
+    ACCEPT --> GATE
+    REJECT --> GATE
+    WALK --> GATE
+
+    GATE{"Validador del motor"}
+    GATE -->|Estructura o restriccion invalida| INVALID["Fin: invalid_provider_output"]
+    GATE -->|ACCEPT viola guardrails| INVALID
+    GATE -->|Valida| APPLY["Aplica accion y actualiza estado"]
+    APPLY --> NEXT(["Siguiente turno"])
+
+    classDef accion fill:#1f3a5f,stroke:#4f86c6,color:#eaf2fb;
+    classDef control fill:#3a2a4d,stroke:#8a63d2,color:#f0e9fb;
+    class PROPOSE,COUNTER,ACCEPT,REJECT,WALK accion;
+    class GATE,APPLY control;
