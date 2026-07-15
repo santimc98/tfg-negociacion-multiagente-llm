@@ -1,19 +1,13 @@
 %% Logica del agente juez / mediador (RuleBasedMediator)
-flowchart LR
-    IN(["Mediador invocado"]) --> P["Calcula solape de PRECIO:<br/>min. vendedor .. max. comprador"]
-    P --> PC{"min. vendedor<br/>&lt;= max. comprador?"}
-    PC -->|No| IMP
-    PC -->|Si| Q["Calcula CANTIDAD:<br/>max(min. comprador, min. vendedor)"]
-    Q --> QC{"&lt;= cantidad maxima<br/>publica?"}
-    QC -->|No| IMP
-    QC -->|Si| D["Calcula solape de PLAZO:<br/>mas temprano vendedor .. mas tardio comprador"]
-    D --> DC{"vendedor<br/>&lt;= comprador?"}
-    DC -->|No| IMP
-    DC -->|Si| MID["Punto equilibrado dentro de cada solape<br/>(recortado a los rangos publicos)"]
-    MID --> CHK{"Cumple restricciones publicas<br/>y ambos guardrails privados?"}
-    CHK -->|No| IMP
-    CHK -->|Si| OUT["Tabula compromiso<br/>(la contraparte puede ACCEPT)"]
-    IMP["Declara IMPASSE<br/>(no existe zona de acuerdo)"]
+%%{init: {"flowchart": {"rankSpacing": 35, "nodeSpacing": 40}}}%%
+flowchart TD
+    IN(["Mediador invocado"]) --> LOOP["Para cada variable negociada:<br/>precio, cantidad y plazo"]
+    LOOP --> C{"¿Existe solape entre los limites<br/>de aceptacion de ambas partes?"}
+    C -->|"No"| IMP["Declara IMPASSE<br/>(no existe zona de acuerdo)"]
+    C -->|"Si"| MID["Toma un punto equilibrado del solape,<br/>recortado a los rangos publicos"]
+    MID --> CHK{"¿El compromiso cumple las restricciones<br/>publicas y ambos guardrails privados?"}
+    CHK -->|"No"| IMP
+    CHK -->|"Si"| OUT["Tabula el compromiso<br/>(la contraparte puede aceptarlo)"]
 
     classDef ok fill:#14402c,stroke:#2faf6a,color:#d8f7e6;
     classDef no fill:#44181c,stroke:#d65151,color:#ffdede;
